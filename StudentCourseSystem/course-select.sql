@@ -165,11 +165,7 @@ CREATE TABLE `teacher`  (
   `Tname` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `Tpassword` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `Tsex` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `Tposition` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `Tphone` bigint(20) NULL DEFAULT NULL,
-  `Temail` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `Tphotourl` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `Tintroduction` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `Tinstitution` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `Tmodtime` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`Tid`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
@@ -177,8 +173,8 @@ CREATE TABLE `teacher`  (
 -- ----------------------------
 -- Records of teacher
 -- ----------------------------
-INSERT INTO `teacher` VALUES ('@MTC8800', '苗添池', 'tiaotianchi', '男', '副教授', 18691784907, 'hgv1231@gmail.com', 'student1.png', NULL, NULL);
-INSERT INTO `teacher` VALUES ('@ZFZ6699', '	\r\n郑夫子', 'zhengfuzi', '男', '副教授', 19856967830, 'fhFq@live.com', 'student1.png', NULL, NULL);
-INSERT INTO `teacher` VALUES ('@ZJL2256', '周杰伦', 'zhoujielun', '男', '教授', 18827264529, '2BNN6v2@163.com', 'student1.png', '哎呦不错呦', '2022-12-27 16:23:16');
+INSERT INTO `teacher` VALUES ('@MTC8800', '苗添池', 'tiaotianchi', '男', '计算机学院', NULL);
+INSERT INTO `teacher` VALUES ('@ZFZ6699', '郑夫子', 'zhengfuzi', '男', '外国语学院', NULL);
+INSERT INTO `teacher` VALUES ('@ZJL2256', '周杰伦', 'zhoujielun', '男', '计算机学院', '2022-12-27 16:23:16');
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -31,7 +31,7 @@ GET http://localhost:9000/teacher/getSchedule/0022
 ###
 GET http://localhost:9000/teacher/queryGrade/@YueYi/3001
 ###
-GET http://localhost:9000/queryFaculity
+GET http://localhost:9000/queryFaculty
 ###
 POST http://localhost/api/student/insertCoursePlan?Cname=Vue%E5%BC%80%E5%8F%91%E4%B8%8E%E8%AF%BE%E7%A8%8B%E5%AE%9E%E8%B7%B5&Sid=19114731&Cid=3002&Tid=@YueYi&Monday=&Tuesday=&Wednesday=&Thursday=1,2&Friday=
 ###

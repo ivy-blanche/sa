@@ -14,7 +14,7 @@ export default {};
 #box #main {
     padding: 20px;
     width: 40%;
-    background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
     border-radius: 10px;
     -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
@@ -42,10 +42,12 @@ html {
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 body {
-  background: url("./assets/Surface\ Family.jpg");
+  background: url("./assets/nuc(1).png") no-repeat center center; /* 居中且不重复 */
+  background-size: cover;   /* 按比例放大，铺满整个屏幕 */
   height: 100%;
-  background-color: #f4f5f5 !important;
+  background-color: #f4f5f5 !important; /* 背景色兜底 */
 }
+
 hr{
   margin: 20px 0;
   opacity: .2;

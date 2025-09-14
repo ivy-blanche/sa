@@ -1,5 +1,9 @@
 <template>
-  <div id="addClass" v-loading.fullscreen.lock="loading" element-loading-text="系统正在自动分配合适的上课教室">
+  <div
+    id="addClass"
+    v-loading.fullscreen.lock="loading"
+    element-loading-text="系统正在自动分配合适的上课教室"
+  >
     <!-- <div> -->
     <h1>添加上课时间</h1>
     <div class="container">
@@ -9,15 +13,23 @@
             <span class="step">STEP. 1</span>选择要添加上课时间的课程：
           </div>
           <div class="left_inner">
-            <div v-if="courseData.length == 0" style="padding-left: 10px;">请添加课程</div>
+            <div v-if="courseData.length == 0" style="padding-left: 10px">
+              请添加课程
+            </div>
             <div class="inner" v-for="item in courseData" :key="item.id">
-              <div class="course" @click="chooseCourse = item.cid; chooseOneCourse(item.cid)"
-                :class="{ userchoose: (item.cid == chooseCourse) }">
+              <div
+                class="course"
+                @click="
+                  chooseCourse = item.cid;
+                  chooseOneCourse(item.cid);
+                "
+                :class="{ userchoose: item.cid == chooseCourse }"
+              >
                 <div class="group">
                   <div class="name">{{ item.cname }}</div>
                 </div>
                 <div class="group">
-                  <div class="faculityName">{{ $store.state.name }}</div>
+                  <div class="facultyName">{{ $store.state.name }}</div>
                 </div>
                 <div class="group">
                   <div class="credit">{{ item.ccredit }}学分</div>
@@ -25,17 +37,24 @@
                 </div>
                 <div class="group">
                   <div class="credit">{{ item.courseweek }}</div>
-                  <div class="proptype">{{ item.cteachbuilding }}{{ item.cclassroom }}</div>
+                  <div class="proptype">
+                    {{ item.cteachbuilding }}{{ item.cclassroom }}
+                  </div>
                 </div>
                 <div class="group">
-                  <div class="faculityName">{{ item.cbelongpro }}</div>
+                  <div class="facultyName">{{ item.cbelongpro }}</div>
                 </div>
               </div>
             </div>
           </div>
           <transition>
-            <el-button type="success" icon="el-icon-check" circle v-if="chooseCourse != '' && chooseData.length != 0"
-              @click="submit"></el-button>
+            <el-button
+              type="success"
+              icon="el-icon-check"
+              circle
+              v-if="chooseCourse != '' && chooseData.length != 0"
+              @click="submit"
+            ></el-button>
           </transition>
         </div>
         <div class="right">
@@ -50,19 +69,33 @@
             <div class="day">周五</div>
           </div>
           <div class="choose_card">
-            <div class="class" v-for="(item, index) in courseTable" :key="index">
-              <div class="class_inner" :class="{ userchoose: item.choose }" v-if="item.index == ''"
-                @click="choose(item, index);">
-              </div>
-              <div class="ban" :class="{ choosed: true }" v-if="item.index != ''"></div>
+            <div
+              class="class"
+              v-for="(item, index) in courseTable"
+              :key="index"
+            >
+              <div
+                class="class_inner"
+                :class="{ userchoose: item.choose }"
+                v-if="item.index == ''"
+                @click="choose(item, index)"
+              ></div>
+              <div
+                class="ban"
+                :class="{ choosed: true }"
+                v-if="item.index != ''"
+              ></div>
             </div>
           </div>
           <div class="tag">
-            <i class="el-icon-info"></i> 请选择上方对应的上课时间，蓝色区块为不可选择上课时间，提交课程后将不能更改。
+            <i class="el-icon-info"></i>
+            请选择上方对应的上课时间，蓝色区块为不可选择上课时间，提交课程后将不能更改。
           </div>
           <div class="choose_list">
             <div class="title">已选时间：</div>
-            <div class="no_chooseData" v-if="chooseData.length == 0">请选课</div>
+            <div class="no_chooseData" v-if="chooseData.length == 0">
+              请选课
+            </div>
             <div class="list" v-for="(item, index) in chooseData" :key="index">
               <div>{{ item.day | toWeek }}</div>
               <div>第{{ item.time }}节</div>
@@ -87,7 +120,7 @@ export default {
       //选择课程的信息
       chooseCourseData: {},
       chooseCourse: "",
-      loading: false
+      loading: false,
     };
   },
   methods: {
@@ -103,7 +136,7 @@ export default {
             tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
             wednesday: data[i].wednesday == null ? "" : data[i].wednesday,
             thursday: data[i].thursday == null ? "" : data[i].thursday,
-            friday: data[i].friday == null ? "" : data[i].friday
+            friday: data[i].friday == null ? "" : data[i].friday,
           },
           index: "",
           courseweek: data[i].courseweek,
@@ -121,13 +154,13 @@ export default {
                 tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
                 wednesday: data[i].wednesday == null ? "" : data[i].wednesday,
                 thursday: data[i].thursday == null ? "" : data[i].thursday,
-                friday: data[i].friday == null ? "" : data[i].friday
+                friday: data[i].friday == null ? "" : data[i].friday,
               },
               index: (this.getWeekDay(k) - 1) * 4 + parseInt(j),
               courseweek: data[i].courseweek,
               cclassroom: data[i].cclassroom,
               cteachbuilding: data[i].cteachbuilding,
-            }
+            };
             scheduleList.push(tmp);
           }
         }
@@ -141,13 +174,13 @@ export default {
             tuesday: "",
             wednesday: "",
             thursday: "",
-            friday: ""
+            friday: "",
           },
           index: "",
           courseweek: "",
           cclassroom: "",
           cteachbuilding: "",
-          choose: false
+          choose: false,
         });
       }
       //把已有的课程放入finaData
@@ -167,9 +200,9 @@ export default {
         var obj = {
           time: time,
           day: day,
-          index: index
+          index: index,
         };
-        console.log(obj)
+        console.log(obj);
         this.chooseData.push(obj);
       } else {
         for (let i in this.chooseData) {
@@ -184,16 +217,16 @@ export default {
       this.$confirm("您确定要添加选择的上课时间吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
           this.addClass();
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           this.$message({
             type: "info",
-            message: "操作已取消"
+            message: "操作已取消",
           });
         });
     },
@@ -201,32 +234,57 @@ export default {
       this.loading = true;
       //获取当前的
       var obj = {
-        Monday: this.chooseCourseData.monday == null ? [] : this.chooseCourseData.monday.split(","),
-        Tuesday: this.chooseCourseData.tuesday == null ? [] : this.chooseCourseData.tuesday.split(","),
-        Wednesday: this.chooseCourseData.wednesday == null ? [] : this.chooseCourseData.wednesday.split(","),
-        Thursday: this.chooseCourseData.thursday == null ? [] : this.chooseCourseData.thursday.split(","),
-        Friday: this.chooseCourseData.friday == null ? [] : this.chooseCourseData.friday.split(",")
+        Monday:
+          this.chooseCourseData.monday == null
+            ? []
+            : this.chooseCourseData.monday.split(","),
+        Tuesday:
+          this.chooseCourseData.tuesday == null
+            ? []
+            : this.chooseCourseData.tuesday.split(","),
+        Wednesday:
+          this.chooseCourseData.wednesday == null
+            ? []
+            : this.chooseCourseData.wednesday.split(","),
+        Thursday:
+          this.chooseCourseData.thursday == null
+            ? []
+            : this.chooseCourseData.thursday.split(","),
+        Friday:
+          this.chooseCourseData.friday == null
+            ? []
+            : this.chooseCourseData.friday.split(","),
       };
       var data = this.chooseData;
-      for(var i of data){
-        switch(i.day){
-          case 1 : obj.Monday.push(i.time + "");break;
-          case 2 : obj.Tuesday.push(i.time + "");break;
-          case 3 : obj.Wednesday.push(i.time + "");break;
-          case 4 : obj.Thursday.push(i.time + "");break;
-          case 5 : obj.Friday.push(i.time + "");break;
+      for (var i of data) {
+        switch (i.day) {
+          case 1:
+            obj.Monday.push(i.time + "");
+            break;
+          case 2:
+            obj.Tuesday.push(i.time + "");
+            break;
+          case 3:
+            obj.Wednesday.push(i.time + "");
+            break;
+          case 4:
+            obj.Thursday.push(i.time + "");
+            break;
+          case 5:
+            obj.Friday.push(i.time + "");
+            break;
         }
       }
-      for(var j in obj){
+      for (var j in obj) {
         obj[j] = obj[j].join(",");
       }
       obj["Cid"] = this.chooseCourseData.cid;
       // console.log(obj)
-      var param = this.$qs.stringify(obj)
+      var param = this.$qs.stringify(obj);
       // console.log(param)
       this.axios
-        .post("teacher/updateCourse",param)
-        .then(res => {
+        .post("teacher/updateCourse", param)
+        .then((res) => {
           if (res.data.code == 200) {
             setTimeout(() => {
               this.loading = false;
@@ -235,7 +293,7 @@ export default {
             }, 2000);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接");
           this.loading = false;
@@ -244,13 +302,13 @@ export default {
     getTeacherCourse() {
       this.axios
         .get("teacher/getSchedule/" + this.$store.state.id)
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             this.courseData = res.data.data;
-            this.courseTable = this.parseData(res.data.data)
+            this.courseTable = this.parseData(res.data.data);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接");
         });
@@ -260,40 +318,46 @@ export default {
       this.chooseData = [];
       this.axios
         .get("teacher/getOneCourse/" + id)
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             this.chooseCourseData = res.data.data;
             // this.courseTable = this.parseData([res.data.data]);
             //让选择的课程复原
-            for(var i of this.courseTable){
+            for (var i of this.courseTable) {
               i.choose = false;
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接");
         });
     },
     getWeekDay(weekday) {
       switch (weekday) {
-        case 'monday': return 1;
-        case 'tuesday': return 2;
-        case 'wednesday': return 3;
-        case 'thursday': return 4;
-        case 'friday': return 5;
-        default: return 0;
+        case "monday":
+          return 1;
+        case "tuesday":
+          return 2;
+        case "wednesday":
+          return 3;
+        case "thursday":
+          return 4;
+        case "friday":
+          return 5;
+        default:
+          return 0;
       }
-    }
+    },
   },
   mounted() {
     //加载老师已选课程信息
     this.getTeacherCourse();
-  }
+  },
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .step {
   color: white;
   padding: 5px 10px;

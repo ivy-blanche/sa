@@ -24,10 +24,6 @@ public class Teacher {
     private String Tname;
     private String Tpassword;
     private String Tsex;
-    private String Tposition;
-    private String Tphone;
-    private String Temail;
-    private String Tphotourl;
-    private String Tintroduction;
+    private String Tinstitution;
     private Date Tmodtime;
 }

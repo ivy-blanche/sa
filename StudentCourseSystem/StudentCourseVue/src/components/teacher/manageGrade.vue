@@ -8,22 +8,24 @@
           <div class="col" v-for="item in courseData" :key="item.cid">
             <div class="course" @click="gotoCourseGrade(item.cid)">
               <div class="group">
-                  <div class="name">{{ item.cname }}</div>
+                <div class="name">{{ item.cname }}</div>
+              </div>
+              <div class="group">
+                <div class="facultyName">{{ $store.state.name }}</div>
+              </div>
+              <div class="group">
+                <div class="credit">{{ item.ccredit }}学分</div>
+                <div class="proptype">{{ item.ctype }}</div>
+              </div>
+              <div class="group">
+                <div class="credit">{{ item.courseweek }}</div>
+                <div class="proptype">
+                  {{ item.cteachbuilding }}{{ item.cclassroom }}
                 </div>
-                <div class="group">
-                  <div class="faculityName">{{ $store.state.name }}</div>
-                </div>
-                <div class="group">
-                  <div class="credit">{{ item.ccredit }}学分</div>
-                  <div class="proptype">{{ item.ctype }}</div>
-                </div>
-                <div class="group">
-                  <div class="credit">{{ item.courseweek }}</div>
-                  <div class="proptype">{{ item.cteachbuilding }}{{ item.cclassroom }}</div>
-                </div>
-                <div class="group">
-                  <div class="faculityName">{{ item.cbelongpro }}</div>
-                </div>
+              </div>
+              <div class="group">
+                <div class="facultyName">{{ item.cbelongpro }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -36,34 +38,34 @@
 export default {
   data() {
     return {
-      courseData: []
+      courseData: [],
     };
   },
   methods: {
     getTeacherCourse() {
       this.axios
         .get("teacher/getSchedule/" + this.$store.state.id)
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             this.courseData = res.data.data;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接，获取未结课课程失败");
         });
     },
     gotoCourseGrade(id) {
       this.$router.push("/teacher/manageGrade/" + id);
-    }
+    },
   },
   mounted() {
     this.getTeacherCourse();
-  }
+  },
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .main {
   display: flex;
   align-items: flex-start;

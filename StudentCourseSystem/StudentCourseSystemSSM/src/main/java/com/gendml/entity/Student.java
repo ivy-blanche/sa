@@ -22,7 +22,6 @@ import java.util.Date;
 public class Student {
     private String Sid;
     private String Sname;
-    private String Sidcard;
     private String Ssex;
     private String Spassword;
     private String Sage;
@@ -30,6 +29,5 @@ public class Student {
     private String Sclass;
     private String Sprofession;
     private String Sinstitution;
-    private String Sphotourl;
     private Date Smodtime;
 }

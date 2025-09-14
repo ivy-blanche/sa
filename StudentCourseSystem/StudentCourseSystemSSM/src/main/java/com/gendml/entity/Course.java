@@ -37,6 +37,8 @@ public class Course {
     private String Wednesday;
     private String Thursday;
     private String Friday;
+    private String Saturday;
+    private String Sunday;
     private String Csemester;
     private String Courseweek;
     private String Cclassroom;

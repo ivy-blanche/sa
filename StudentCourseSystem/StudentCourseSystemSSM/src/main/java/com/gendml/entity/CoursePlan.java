@@ -1,5 +1,8 @@
 package com.gendml.entity;
 
+import com.gendml.entity.Teacher;
+import com.gendml.entity.Student;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,10 +14,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.Transient;
 
-/**
- * @author Зөндөө
- * @create 2022-05-28 21:10
- */
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -32,6 +32,8 @@ public class CoursePlan {
     private String Wednesday;
     private String Thursday;
     private String Friday;
+    private String Saturday;
+    private String Sunday;
 
     @TableField(exist = false)
     @Transient

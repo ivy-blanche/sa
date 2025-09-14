@@ -23,16 +23,14 @@
             <i class="el-icon-setting"></i>
             <span slot="title">管理教师</span>
           </el-menu-item>
-          <el-menu-item index="manageFaculity">
-            <i class="el-icon-news"></i>
-            <span slot="title">管理院系</span>
-          </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main style="margin-left:250.5px">
+      <el-main style="margin-left: 250.5px">
         <div class="tobar base_shadow">
           <div class="title">学生在线选课系统</div>
-          <el-button class="exit_btn" type="danger" @click="exit">退出</el-button>
+          <el-button class="exit_btn" type="danger" @click="exit"
+            >退出</el-button
+          >
         </div>
         <transition>
           <router-view class="router"></router-view>
@@ -49,30 +47,30 @@ export default {
     return {};
   },
   components: {
-    "user-info": userInfo
+    "user-info": userInfo,
   },
   methods: {
     exit() {
       //清除Cookie
-      document.cookie = "=;"
+      document.cookie = "=;";
       //清除session
       sessionStorage.clear();
       window.location.href = this.COMMON.login_location;
     },
     select(index) {
       this.$router.push("/admin/" + index);
+    },
+  },
+  mounted() {
+    console.log("store" + this.$store.state.identity);
+    if (this.$store.state.identity != "admin") {
+      this.$router.push("/");
     }
   },
-  mounted(){
-    console.log("store"+this.$store.state.identity)
-    if(this.$store.state.identity != 'admin'){
-      this.$router.push('/')
-    }
-  }
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .tobar {
   background-color: #fff;
   margin: -20px;

@@ -3,9 +3,9 @@ com\gendml\service\TeacherService.class
 com\gendml\mapper\SCMapper.class
 com\gendml\controller\TeacherController.class
 com\gendml\testVueProjectApplication.class
-com\gendml\entity\Faculity.class
 com\gendml\entity\ResponseResult.class
 com\gendml\entity\Teacher.class
+com\gendml\mapper\FacultyMapper.class
 com\gendml\mapper\TeacherMapper.class
 com\gendml\service\impl\AdminServiceImpl.class
 com\gendml\service\impl\StudentServiceImpl.class
@@ -14,6 +14,7 @@ com\gendml\test\mybatisplusTest.class
 com\gendml\mapper\CourseMapper.class
 com\gendml\service\impl\TeacherServiceImpl.class
 com\gendml\controller\AdminController.class
+com\gendml\entity\Faculty.class
 com\gendml\entity\Student.class
 com\gendml\mapper\StudentMapper.class
 com\gendml\service\impl\CourseServiceImpl.class
@@ -21,7 +22,6 @@ com\gendml\entity\SC.class
 com\gendml\controller\StudentController.class
 com\gendml\entity\Course.class
 com\gendml\mapper\CoursePlanMapper.class
-com\gendml\mapper\FaculityMapper.class
 com\gendml\service\CourseService.class
 com\gendml\controller\myController.class
 com\gendml\service\AdminService.class

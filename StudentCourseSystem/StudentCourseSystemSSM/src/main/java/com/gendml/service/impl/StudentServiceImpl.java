@@ -98,4 +98,40 @@ public class StudentServiceImpl implements StudentService {
         return coursePlanMapper.selectList(qw);
     }
 
+    @Override
+    public List<Student> queryStudentsByCondition(Student student, int currentPage, int size) {
+        QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+        
+        if (student.getSid() != null && !student.getSid().isEmpty()) {
+            queryWrapper.like("Sid", student.getSid());
+        }
+        if (student.getSclass() != null && !student.getSclass().isEmpty()) {
+            queryWrapper.like("Sclass", student.getSclass());
+        }
+        if (student.getSinstitution() != null && !student.getSinstitution().isEmpty()) {
+            queryWrapper.like("Sinstitution", student.getSinstitution());
+        }
+        
+        IPage<Student> page = new Page<>(currentPage, size);
+        StudentMapper.selectPage(page, queryWrapper);
+        return page.getRecords();
+    }
+
+    @Override
+    public int countStudentsByCondition(Student student) {
+        QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+        
+        if (student.getSid() != null && !student.getSid().isEmpty()) {
+            queryWrapper.like("Sid", student.getSid());
+        }
+        if (student.getSclass() != null && !student.getSclass().isEmpty()) {
+            queryWrapper.like("Sclass", student.getSclass());
+        }
+        if (student.getSinstitution() != null && !student.getSinstitution().isEmpty()) {
+            queryWrapper.like("Sinstitution", student.getSinstitution());
+        }
+        
+        return StudentMapper.selectCount(queryWrapper);
+    }
+
 }

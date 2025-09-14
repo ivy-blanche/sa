@@ -27,4 +27,8 @@ public interface StudentService {
     public int getStudentNum();
 
     public List<CoursePlan> queryMySchedules(String sid);
+
+    public List<Student> queryStudentsByCondition(Student student, int currentPage, int size);
+
+    public int countStudentsByCondition(Student student);
 }

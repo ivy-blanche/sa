@@ -98,4 +98,34 @@ public class TeacherServiceImpl implements TeacherService {
         return courseMapper.selectList(qw);
     }
 
+    @Override
+    public List<Teacher> queryTeachersByCondition(Teacher teacher, int currentPage, int size) {
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
+        
+        if (teacher.getTid() != null && !teacher.getTid().isEmpty()) {
+            queryWrapper.like("Tid", teacher.getTid());
+        }
+        if (teacher.getTinstitution() != null && !teacher.getTinstitution().isEmpty()) {
+            queryWrapper.like("Tinstitution", teacher.getTinstitution());
+        }
+        
+        IPage<Teacher> page = new Page<>(currentPage, size);
+        TeacherMapper.selectPage(page, queryWrapper);
+        return page.getRecords();
+    }
+
+    @Override
+    public int countTeachersByCondition(Teacher teacher) {
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
+        
+        if (teacher.getTid() != null && !teacher.getTid().isEmpty()) {
+            queryWrapper.like("Tid", teacher.getTid());
+        }
+        if (teacher.getTinstitution() != null && !teacher.getTinstitution().isEmpty()) {
+            queryWrapper.like("Tinstitution", teacher.getTinstitution());
+        }
+        
+        return TeacherMapper.selectCount(queryWrapper);
+    }
+
 }

@@ -66,7 +66,6 @@ public class StudentController {
                                          @RequestParam("Spassword") String Spassword,
                                          @RequestParam("Sname") String Sname,
                                          @RequestParam("Ssex") String Ssex,
-                                         @RequestParam("Sidcard") String Sidcard,
                                          @RequestParam("Sgrade") String Sgrade,
                                          @RequestParam("Sinstitution") String Sinstitution) {
         if (studentService.queryOneStudentBySid(Sid) != null) {
@@ -76,7 +75,6 @@ public class StudentController {
                 .setSpassword(Spassword)
                 .setSname(Sname)
                 .setSsex(Ssex)
-                .setSidcard(Sidcard)
                 .setSgrade(Sgrade)
                 .setSinstitution(Sinstitution)
                 .setSmodtime(new Date()));
@@ -175,12 +173,36 @@ public class StudentController {
             for (SC sc : res) {
                 Course course = courseService.queryOneCourseByCid(sc.getCid());
                 sc.setCourse(course);
-//                coursePlan.setStudent(studentService.queryOneStudentBySid(coursePlan.getSid()));
+//                coursePlan.setStudent(studentService.queryOneStudentBySid(coursePlan.getSid());
                 sc.setTeacher(teacherService.queryOneTeacherByTid(course.getTid()));
             }
             return ResponseResult.success(res);
         }
         return ResponseResult.error();
+    }
+
+    // 条件分页查询学生
+    @GetMapping("getPageStudentByCondition")
+    public ResponseResult<Map<String, Object>> getPageStudentByCondition(
+            @RequestParam(value = "sid", required = false) String sid,
+            @RequestParam(value = "sclass", required = false) String sclass,
+            @RequestParam(value = "sinstitution", required = false) String sinstitution,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        
+        Student student = new Student();
+        student.setSid(sid);
+        student.setSclass(sclass);
+        student.setSinstitution(sinstitution);
+        
+        List<Student> students = studentService.queryStudentsByCondition(student, page, size);
+        int total = studentService.countStudentsByCondition(student);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", students);
+        result.put("total", total);
+        
+        return ResponseResult.success(result);
     }
 
 

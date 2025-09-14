@@ -1,7 +1,8 @@
+E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\entity\Faculty.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\entity\Student.java
+E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\mapper\FacultyMapper.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\service\CourseService.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\service\impl\CourseServiceImpl.java
-E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\entity\Faculity.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\service\TeacherService.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\service\impl\StudentServiceImpl.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\entity\SC.java
@@ -26,4 +27,3 @@ E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\mapper
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\service\AdminService.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\testVueProjectApplication.java
 E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\mapper\CoursePlanMapper.java
-E:\sa\StudentCourseSystem\StudentCourseSystemSSM\src\main\java\com\gendml\mapper\FaculityMapper.java

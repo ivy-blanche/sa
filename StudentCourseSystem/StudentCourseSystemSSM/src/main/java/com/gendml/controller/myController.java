@@ -2,9 +2,9 @@ package com.gendml.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gendml.entity.Admin;
-import com.gendml.entity.Faculity;
+import com.gendml.entity.Faculty;
 import com.gendml.entity.ResponseResult;
-import com.gendml.mapper.FaculityMapper;
+import com.gendml.mapper.FacultyMapper;
 import com.gendml.service.AdminService;
 import com.gendml.service.CourseService;
 import com.gendml.service.StudentService;
@@ -39,7 +39,7 @@ public class myController {
     private AdminService adminService;
 
     @Autowired
-    private FaculityMapper faculityMapper;
+    private FacultyMapper facultyMapper;
 
     @GetMapping("getNumInfo")
     public ResponseResult<Map<String,Integer>> getNumInfo(){
@@ -55,18 +55,18 @@ public class myController {
         return ResponseResult.success(res);
     }
 
-    @PostMapping("insertFaculity")
-    public ResponseResult<Void> insertFaculity(@RequestParam("faculityName") String faculityName){
-        int res = faculityMapper.insert(new Faculity().setFname(faculityName));
+    @PostMapping("insertFaculty")
+    public ResponseResult<Void> insertFaculty(@RequestParam("facultyName") String facultyName){
+        int res = facultyMapper.insert(new Faculty().setFname(facultyName));
         if(res != 0){
             return ResponseResult.success();
         }
         return ResponseResult.error();
     }
 
-    @GetMapping("queryFaculity")
-    public ResponseResult<List<Faculity>> queryFaculity(){
-        List<Faculity> res = faculityMapper.selectList(new QueryWrapper<Faculity>());
+    @GetMapping("queryFaculty")
+    public ResponseResult<List<Faculty>> queryFaculty(){
+        List<Faculty> res = facultyMapper.selectList(new QueryWrapper<Faculty>());
         if(null != res){
             return ResponseResult.success(res);
         }

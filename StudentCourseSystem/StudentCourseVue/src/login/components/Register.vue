@@ -1,8 +1,14 @@
 <template>
   <div id="register">
-    <div class="title">学生选课系统 | REGISTER</div>
-    <hr>
-    <el-form :model="registerForm" :rules="rules" label-width="80px" :label-position="'left'" ref="registerForm">
+    <div class="title">学生选课系统</div>
+    <hr />
+    <el-form
+      :model="registerForm"
+      :rules="rules"
+      label-width="80px"
+      :label-position="'left'"
+      ref="registerForm"
+    >
       <el-form-item label="学号" prop="Sid">
         <el-input v-model="registerForm.Sid"></el-input>
       </el-form-item>
@@ -33,23 +39,39 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="选择学院" prop="Sinstitution">
-            <el-select style="width:95%" v-model="registerForm.Sinstitution" placeholder="请选择学院">
-              <el-option v-for="item in Sinstitution" :key="item.id" :label="item" :value="item"></el-option>
+            <el-select
+              style="width: 95%"
+              v-model="registerForm.Sinstitution"
+              placeholder="请选择学院"
+            >
+              <el-option
+                v-for="item in Sinstitution"
+                :key="item.id"
+                :label="item"
+                :value="item"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item label="入学时间" prop="Sgrade">
-            <el-date-picker style="width: 100%;" v-model="registerForm.Sgrade" type="year" placeholder="选择年"
-              value-format="yyyy"></el-date-picker>
+            <el-date-picker
+              style="width: 100%"
+              v-model="registerForm.Sgrade"
+              type="year"
+              placeholder="选择年"
+              value-format="yyyy"
+            ></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-form-item class="btn_box">
         <el-button type="primary" @click="registerClick">注 册</el-button>
-        <el-button type="info" @click="$router.push('/login')">返回登录</el-button>
+        <el-button type="info" @click="$router.push('/login')"
+          >返回登录</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -77,34 +99,40 @@ export default {
         Spassword2: "",
         Sinstitution: "",
         Sgrade: "",
-        Smodtime: null
+        Smodtime: null,
       },
       rules: {
         Sid: [{ required: true, message: "请输入账号", trigger: "blur" }],
         Sname: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         Ssex: [{ required: true, message: "请输入性别", trigger: "blur" }],
-        Sidcard: [{ required: true, message: "请输入身份证号", trigger: "blur" }],
+        Sidcard: [
+          { required: true, message: "请输入身份证号", trigger: "blur" },
+        ],
         Spassword: [{ required: true, message: "请输入密码", trigger: "blur" }],
         Spassword2: [
-          { validator: validatePassword2, trigger: ["blur", "change"] }
+          { validator: validatePassword2, trigger: ["blur", "change"] },
         ],
         Sinstitution: [
-          { required: true, message: "请选择学院", trigger: ["blur", "change"] }
+          {
+            required: true,
+            message: "请选择学院",
+            trigger: ["blur", "change"],
+          },
         ],
         Sgrade: [
           {
             required: true,
             message: "请选择入学时间",
-            trigger: ["blur", "change"]
-          }
-        ]
+            trigger: ["blur", "change"],
+          },
+        ],
       },
       Sinstitution: [],
     };
   },
   methods: {
     registerClick() {
-      this.$refs.registerForm.validate(valid => {
+      this.$refs.registerForm.validate((valid) => {
         if (valid) {
           let obj = {
             Sid: this.registerForm.Sid,
@@ -114,31 +142,40 @@ export default {
             Sidcard: this.registerForm.Sidcard,
             faculty: this.registerForm.Sinstitution,
             Sgrade: this.registerForm.Sgrade,
-            Smodtime: new Date()
+            Smodtime: new Date(),
           };
           console.log(obj);
           this.axios
-            .post("student/register?Sid=" + this.registerForm.Sid +
-              "&Spassword=" + this.registerForm.Spassword +
-              "&Sname=" + this.registerForm.Sname +
-              "&Ssex=" + this.registerForm.Ssex +
-              "&Sidcard=" + this.registerForm.Sidcard +
-              "&Sgrade=" + this.registerForm.Sgrade +
-              "&Sinstitution=" + this.registerForm.Sinstitution)
-            .then(res => {
+            .post(
+              "student/register?Sid=" +
+                this.registerForm.Sid +
+                "&Spassword=" +
+                this.registerForm.Spassword +
+                "&Sname=" +
+                this.registerForm.Sname +
+                "&Ssex=" +
+                this.registerForm.Ssex +
+                "&Sidcard=" +
+                this.registerForm.Sidcard +
+                "&Sgrade=" +
+                this.registerForm.Sgrade +
+                "&Sinstitution=" +
+                this.registerForm.Sinstitution
+            )
+            .then((res) => {
               console.log(res.data);
               if (res.data.code == 200) {
                 this.$message({
                   showClose: true,
                   message: "注册成功，请登录",
-                  type: 'success'
+                  type: "success",
                 });
                 this.$router.push("/login");
               } else {
                 this.$message({
                   showClose: true,
                   message: "该学号已被占用，注册失败",
-                  type: 'error'
+                  type: "error",
                 });
               }
             })
@@ -152,31 +189,31 @@ export default {
           return false;
         }
       });
-    }
+    },
   },
   mounted() {
     this.axios
-      .get("queryFaculity")
-      .then(res => {
-        for(var ele of res.data.data)
-        this.Sinstitution.push(ele.fname)
+      .get("queryFaculty")
+      .then((res) => {
+        for (var ele of res.data.data) this.Sinstitution.push(ele.fname);
       })
       .catch(() => {
         this.$message({
           showClose: true,
           message: "无法获取学院信息，请检查接口是否正常！",
-          type: 'error'
-        })
-      })
+          type: "error",
+        });
+      });
   },
 };
 </script>
-
 
 <style lang="scss" scoped>
 #register {
   .title {
     font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
   .btn_box {

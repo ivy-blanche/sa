@@ -1,32 +1,75 @@
 <template>
   <div id="manageStudent">
     <h1>管理学生</h1>
-    <div class="container">
-      <div class="left">
-        <div class="card student" v-for="(item, index) in studentData" :key="item.id">
-          <div class="info">
-            <div class="name">学号：{{ item.sid }}</div>
-            <div class="name">学院：{{ item.sinstitution }}</div>
-            <div class="account">身份证号：{{ item.sidcard }}</div>
-            <div class="account">年龄：{{ item.sage }}</div>
-            <div class="account">年级：{{ item.sgrade }}级</div>
-            <div class="account">专业：{{ item.sprofession }}</div>
-            <div class="account">班级：{{ item.sclass }}</div>
-            <el-button type="danger" size="small" style="background: #7266ba; border-color: #7266ba"
-              @click="deleteUser(item.sid, index)">删除</el-button>
-          </div>
-          <div class="avant"
-            :style="[item.sphotourl != null ? { 'background': 'url(' + require('../../assets/photo/' + item.sphotourl) + ') center center /90% no-repeat' } : '']">
-            <div class="imgName">
-              姓名：{{ item.sname }}
-            </div>
-          </div>
-        </div>
-        <el-button type="primary" v-show="this.studentData.length < this.total" style="float: right" @click="getMore">
-          加载更多</el-button>
-      </div>
-      <div class="right">
-        <ve-pie :data="chartData"></ve-pie>
+    <div class="search-form">
+      <el-form :model="queryForm" label-width="80px">
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="学号">
+              <el-input
+                v-model="queryForm.sid"
+                placeholder="请输入学号"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="班级">
+              <el-input
+                v-model="queryForm.sclass"
+                placeholder="请输入班级"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="学院">
+              <el-input
+                v-model="queryForm.sinstitution"
+                placeholder="请输入学院"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" @click="handleQuery">查询</el-button>
+              <el-button @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+
+    <div class="table-container">
+      <el-table :data="studentData" stripe style="width: 100%">
+        <el-table-column prop="sid" label="学号" width="120"></el-table-column>
+        <el-table-column
+          prop="sname"
+          label="姓名"
+          width="100"
+        ></el-table-column>
+        <el-table-column prop="sinstitution" label="学院"></el-table-column>
+        <el-table-column prop="sprofession" label="专业"></el-table-column>
+        <el-table-column label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button
+              type="danger"
+              size="mini"
+              @click="deleteUser(scope.row.sid, scope.$index)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="pagination">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
       </div>
     </div>
   </div>
@@ -37,163 +80,124 @@ export default {
   data() {
     return {
       studentData: [],
-      chartData: {
-        columns: ["用户", "数量"],
-        rows: [{ 用户: "已展示用户", 数量: 0 }, { 用户: "未展示用户", 数量: 0 }]
+      queryForm: {
+        sid: "",
+        sclass: "",
+        sinstitution: "",
       },
+      currentPage: 1,
+      pageSize: 10,
       total: 0,
-      page: 1
+      loading: false,
     };
   },
   methods: {
-    getStudentData(callback) {
+    fetchStudents() {
+      this.loading = true;
+      const params = {
+        page: this.currentPage,
+        size: this.pageSize,
+        ...this.queryForm,
+      };
+
+      // 移除空值参数
+      Object.keys(params).forEach((key) => {
+        if (params[key] === "") {
+          delete params[key];
+        }
+      });
+
       this.axios
-        .get("student/getPageStudent/" + this.page + "/3")
-        .then(res => {
+        .get("student/getPageStudentByCondition", { params })
+        .then((res) => {
           if (res.data.code == 200) {
-            this.total = this.$store.state.studentNum;
-            // console.log(this.$store.state.studentNum)
-            //...相当于把state的内容和data合并
-            this.studentData = [
-              ...this.studentData,
-              ...res.data.data
-            ];
-            // console.log(this.studentData)
-            callback();
+            this.studentData = res.data.data.list;
+            this.total = res.data.data.total;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-          // this.$message("服务器无法连接");
+          this.$message.error("获取学生数据失败");
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
-    getMore() {
-      this.page++;
-      this.getStudentData(() => {
-        this.chartData.rows[0].数量 = this.studentData.length;
-        this.chartData.rows[1].数量 = this.total - this.studentData.length;
-      });
+    handleQuery() {
+      this.currentPage = 1;
+      this.fetchStudents();
+    },
+    resetQuery() {
+      this.queryForm = {
+        sid: "",
+        sclass: "",
+        sinstitution: "",
+      };
+      this.currentPage = 1;
+      this.fetchStudents();
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.fetchStudents();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.fetchStudents();
     },
     deleteUser(id, index) {
       this.$confirm("您确定要删除该学生吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
           this.axios
             .post("student/deleteStudent?Sid=" + id)
-            .then(res => {
+            .then((res) => {
               if (res.data.code == 200) {
-                this.total--;
-                this.studentData.splice(index, 1);
-                this.chartData.rows[0].数量 = this.studentData.length;
-                this.chartData.rows[1].数量 = this.total - this.studentData.length;
                 this.$message({
                   showClose: true,
                   message: "删除成功！",
-                  type: "success"
+                  type: "success",
                 });
+                this.fetchStudents(); // 重新加载数据
               }
             })
             .catch(() => {
-              // console.log(err);
-              this.$message("服务器无法连接");
+              this.$message.error("服务器无法连接");
             });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "操作已取消"
+            message: "操作已取消",
           });
         });
-    }
+    },
   },
   mounted() {
-    this.getStudentData(() => {
-      this.chartData.rows[0].数量 = this.studentData.length;
-      this.chartData.rows[1].数量 = this.total - this.studentData.length;
-    });
-    this.axios
-      .get("getNumInfo")
-      .then(res => {
-        if (res.data.code == 200) {
-          //将数量放入vuex
-          var state = JSON.parse(sessionStorage.getItem("state"));
-          //...相当于args 可以将数组或者JSON的元素合并为一个
-          state = {
-            ...state,
-            ...res.data.data
-          }
-          // console.log(state)
-          sessionStorage.setItem("state", JSON.stringify(state))
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        this.$message("服务器无法连接");
-      });
-  }
+    this.fetchStudents();
+  },
 };
 </script>
 
-<style lang='scss' scoped>
-.container {
-  display: flex;
+<style lang="scss" scoped>
+.search-form {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
 
-  .left {
-    width: 70%;
+.table-container {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 
-    .student {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px 40px;
-
-      .avant {
-        // background: url(../../assets/student1.png);
-        // margin-top: 125px;
-        background-color: #c4c8c9a2;
-        width: 170px;
-        height: 170px;
-        border-radius: 100px;
-        line-height: 100px;
-        text-align: center;
-        font-weight: bold;
-        color: rgba(0, 0, 0, 0.5);
-        font-size: 1.4rem;
-
-        .imgName {
-          margin-top: 145px;
-        }
-      }
-
-      .info {
-        .name {
-          margin-right: 40px;
-          float: left;
-          color: #99dadc;
-          font-size: 1.2rem;
-          margin-bottom: 10px;
-          font-weight: bold;
-        }
-
-        .account {
-
-          color: #969799;
-          margin-bottom: 10px;
-        }
-      }
-    }
-  }
-
-  .right {
-    width: 30%;
-    background-color: #fff;
+  .pagination {
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
-    height: 350px;
-    margin-left: 20px;
+    text-align: right;
   }
 }
 </style>

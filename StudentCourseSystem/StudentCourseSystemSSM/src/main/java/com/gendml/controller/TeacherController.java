@@ -261,4 +261,26 @@ public class TeacherController {
         }
         return ResponseResult.error();
     }
+
+    // 条件分页查询教师
+    @GetMapping("getPageTeacherByCondition")
+    public ResponseResult<Map<String, Object>> getPageTeacherByCondition(
+            @RequestParam(value = "tid", required = false) String tid,
+            @RequestParam(value = "tinstitution", required = false) String tinstitution,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        
+        Teacher teacher = new Teacher();
+        teacher.setTid(tid);
+        teacher.setTinstitution(tinstitution);
+        
+        List<Teacher> teachers = teacherService.queryTeachersByCondition(teacher, page, size);
+        int total = teacherService.countTeachersByCondition(teacher);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", teachers);
+        result.put("total", total);
+        
+        return ResponseResult.success(result);
+    }
 }

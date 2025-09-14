@@ -3,14 +3,27 @@
     <h1>学生选课</h1>
     <div class="main">
       <el-row class="course_box card" :gutter="20">
-        <div class="title">当前可选课程范围：{{ studentInfo.sinstitution }} | {{ studentInfo.sprofession }}专业课程</div>
-        <el-col :md="12" :lg="8" :xl="6" v-for="item in courseData" :key="item.cid">
-          <div class="course" @click="choose(item.cid)" :class="{ choose: (item.cid == chooseCourse) }">
+        <div class="title">
+          当前可选课程范围：{{ studentInfo.sinstitution }} |
+          {{ studentInfo.sprofession }}专业课程
+        </div>
+        <el-col
+          :md="12"
+          :lg="8"
+          :xl="6"
+          v-for="item in courseData"
+          :key="item.cid"
+        >
+          <div
+            class="course"
+            @click="choose(item.cid)"
+            :class="{ choose: item.cid == chooseCourse }"
+          >
             <div class="group">
               <div class="name">{{ item.cname }}</div>
             </div>
             <div class="group">
-              <div class="faculityName">{{ item.teacher.tname }}</div>
+              <div class="facultyName">{{ item.teacher.tname }}</div>
             </div>
             <div class="group">
               <div class="credit">{{ item.ccredit }}学分</div>
@@ -18,15 +31,23 @@
             </div>
             <div class="group">
               <div class="credit">{{ item.courseweek }}</div>
-              <div class="proptype">{{ item.cteachbuilding }}{{ item.cclassroom }}</div>
+              <div class="proptype">
+                {{ item.cteachbuilding }}{{ item.cclassroom }}
+              </div>
             </div>
             <div class="group">
-              <div class="faculityName">{{ item.cbelongpro }}</div>
+              <div class="facultyName">{{ item.cbelongpro }}</div>
             </div>
           </div>
         </el-col>
         <transition>
-          <el-button type="success" icon="el-icon-check" circle v-if="flag && chooseCourse != ''" @click="submit">
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            circle
+            v-if="flag && chooseCourse != ''"
+            @click="submit"
+          >
           </el-button>
         </transition>
       </el-row>
@@ -43,20 +64,42 @@
           <div class="choose_card">
             <div class="class" v-for="(item, index) in classTable" :key="index">
               <div class="class_inner" v-if="item.index == ''"></div>
-              <div class="ban" :class="{ choosed: true, error: item.error }" v-if="item.index != ''"></div>
+              <div
+                class="ban"
+                :class="{ choosed: true, error: item.error }"
+                v-if="item.index != ''"
+              ></div>
             </div>
           </div>
 
           <transition>
-            <div class="card tag" v-if="chooseCourse == ''" style="background:#409EFF">请选择左侧您想要选课的课程</div>
+            <div
+              class="card tag"
+              v-if="chooseCourse == ''"
+              style="background: #409eff"
+            >
+              请选择左侧您想要选课的课程
+            </div>
           </transition>
 
           <transition>
-            <div class="card tag" v-if="flag == false" style="background:#F56C6C">该课程与已选课程时间冲突，无法选课</div>
+            <div
+              class="card tag"
+              v-if="flag == false"
+              style="background: #f56c6c"
+            >
+              该课程与已选课程时间冲突，无法选课
+            </div>
           </transition>
 
           <transition>
-            <div class="card tag" v-if="flag == true && chooseCourse != ''" style="background:#67C23A">本节课为可选状态</div>
+            <div
+              class="card tag"
+              v-if="flag == true && chooseCourse != ''"
+              style="background: #67c23a"
+            >
+              本节课为可选状态
+            </div>
           </transition>
         </div>
         <div class="class_box card" style="overflow: visible">
@@ -69,9 +112,17 @@
             <div class="day">周五</div>
           </div>
           <div class="choose_card">
-            <div class="class" v-for="(item, index) in chooseCourseClassData" :key="index">
+            <div
+              class="class"
+              v-for="(item, index) in chooseCourseClassData"
+              :key="index"
+            >
               <div class="class_inner" v-if="item.index == ''"></div>
-              <div class="ban" :class="{ choose: item.choose, error: item.error }" v-if="item.index != ''"></div>
+              <div
+                class="ban"
+                :class="{ choose: item.choose, error: item.error }"
+                v-if="item.index != ''"
+              ></div>
             </div>
           </div>
         </div>
@@ -92,45 +143,51 @@ export default {
         tuesday: "",
         wednesday: "",
         thursday: "",
-        friday: ""
+        friday: "",
       },
       studentInfo: {},
       courseData: [],
       chooseCourseClassData: [],
       classTable: [],
       chooseCourse: "",
-      flag: true
+      flag: true,
     };
   },
   methods: {
     getStudentClass() {
       this.axios
         .get("student/getSchedule/" + this.$store.state.id)
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             this.classTable = this.parseData(res.data.data, false);
             // console.log(this.classTable)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接");
         });
     },
     getWeekDay(weekday) {
       switch (weekday) {
-        case 'monday': return 1;
-        case 'tuesday': return 2;
-        case 'wednesday': return 3;
-        case 'thursday': return 4;
-        case 'friday': return 5;
-        default: return 0;
+        case "monday":
+          return 1;
+        case "tuesday":
+          return 2;
+        case "wednesday":
+          return 3;
+        case "thursday":
+          return 4;
+        case "friday":
+          return 5;
+        default:
+          return 0;
       }
     },
     getCourseData() {
       this.axios
         .get("teacher/getPageCourse/1/100")
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             // //去除某个课程无开课老师的情况，逻辑上不需要从此处更改，需要在管理员删除教师后直接清除其所有数据，这里我比较懒，直接改的这一模块
             // var temp = res.data.data;
@@ -139,12 +196,12 @@ export default {
             //   if (temp[i].teacher != null) {
             //     result.push(temp[i]);
             //   }
-            // }    
+            // }
             this.courseData = res.data.data;
             // console.log(this.courseData)
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接，获取学生可选课程失败");
         });
@@ -162,12 +219,14 @@ export default {
             tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
             wednesday: data[i].wednesday == null ? "" : data[i].wednesday,
             thursday: data[i].thursday == null ? "" : data[i].thursday,
-            friday: data[i].friday == null ? "" : data[i].friday
+            friday: data[i].friday == null ? "" : data[i].friday,
           },
           index: "",
           courseweek: data[i].courseweek,
           cclassroom: isOne ? data[i].cclassroom : data[i].course.cclassroom,
-          cteachbuilding: isOne ? data[i].cteachbuilding : data[i].course.cteachbuilding,
+          cteachbuilding: isOne
+            ? data[i].cteachbuilding
+            : data[i].course.cteachbuilding,
         };
 
         for (var k in schedule.schedule) {
@@ -182,13 +241,17 @@ export default {
                 tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
                 wednesday: data[i].wednesday == null ? "" : data[i].wednesday,
                 thursday: data[i].thursday == null ? "" : data[i].thursday,
-                friday: data[i].friday == null ? "" : data[i].friday
+                friday: data[i].friday == null ? "" : data[i].friday,
               },
               index: (this.getWeekDay(k) - 1) * 4 + parseInt(j),
               courseweek: data[i].courseweek,
-              cclassroom: isOne ? data[i].cclassroom : data[i].course.cclassroom,
-              cteachbuilding: isOne ? data[i].cteachbuilding : data[i].course.cteachbuilding,
-            }
+              cclassroom: isOne
+                ? data[i].cclassroom
+                : data[i].course.cclassroom,
+              cteachbuilding: isOne
+                ? data[i].cteachbuilding
+                : data[i].course.cteachbuilding,
+            };
             scheduleList.push(tmp);
           }
         }
@@ -222,10 +285,10 @@ export default {
       this.chooseCourse = id;
       this.axios
         .get("teacher/getOneCourse/" + this.chooseCourse)
-        .then(res => {
+        .then((res) => {
           if (res.data.code == 200) {
             var r = res.data.data;
-            for(var i in this.obj){
+            for (var i in this.obj) {
               this.obj[i] = r[i] == null ? "" : r[i];
             }
             // console.log(this.obj)
@@ -233,7 +296,7 @@ export default {
             this.chooseClassToClassData();
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接，获取选择课程课节失败");
         });
@@ -241,7 +304,10 @@ export default {
     chooseClassToClassData() {
       //1. chooseCourseClassData是选择课程的时间安排表
       //2.  调用parseData填充chooseCourseClassData数据
-      this.chooseCourseClassData = this.parseData(this.chooseCourseClassData, true);
+      this.chooseCourseClassData = this.parseData(
+        this.chooseCourseClassData,
+        true
+      );
       this.flag = true;
       // =====初始化课程表=======
       for (var i = 0; i < this.chooseCourseClassData.length; ++i) {
@@ -250,7 +316,7 @@ export default {
         this.chooseCourseClassData[i].choose = true;
         let index = this.chooseCourseClassData[i].index;
         // 5. 将chooseCourseClassData与classData中的数据做比对，如果比对冲突，将this.flag设置为false，并且将冲突的对象添加ferror: true字段
-        this.classTable.some(item => {
+        this.classTable.some((item) => {
           if (item.index == index && item.index != "" && index != "") {
             this.chooseCourseClassData[i].error = true;
             this.flag = false;
@@ -261,31 +327,41 @@ export default {
     },
     submit() {
       this.axios
-        .post("student/insertCoursePlan?Cname=" + this.obj.cname +
-            "&Sid=" + this.$store.state.id + 
-            "&Cid=" + this.obj.cid + 
-            "&Tid=" + this.obj.tid + 
-            "&Monday=" + this.obj.monday + 
-            "&Tuesday=" + this.obj.tuesday + 
-            "&Wednesday=" + this.obj.wednesday + 
-            "&Thursday=" + this.obj.thursday + 
-            "&Friday=" + this.obj.friday
-          )
-        .then(res => {
+        .post(
+          "student/insertCoursePlan?Cname=" +
+            this.obj.cname +
+            "&Sid=" +
+            this.$store.state.id +
+            "&Cid=" +
+            this.obj.cid +
+            "&Tid=" +
+            this.obj.tid +
+            "&Monday=" +
+            this.obj.monday +
+            "&Tuesday=" +
+            this.obj.tuesday +
+            "&Wednesday=" +
+            this.obj.wednesday +
+            "&Thursday=" +
+            this.obj.thursday +
+            "&Friday=" +
+            this.obj.friday
+        )
+        .then((res) => {
           if (res.data.code == 200) {
             this.$message({
               showClose: true,
               message: "选课成功",
-              type: "success"
-            })
+              type: "success",
+            });
             this.$router.push("/student");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.$message("服务器无法连接");
         });
-    }
+    },
   },
   mounted() {
     this.axios
@@ -297,15 +373,15 @@ export default {
         }
       })
       .catch(() => {
-        this.$message("服务器连接异常")
+        this.$message("服务器连接异常");
       });
     this.getStudentClass(); //连带执行parseData
     this.getCourseData();
-  }
+  },
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .choose {
   background-color: #67c23a !important;
   border-color: #67c23a !important;
