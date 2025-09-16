@@ -48,8 +48,24 @@
         ></el-table-column>
         <el-table-column prop="sinstitution" label="学院"></el-table-column>
         <el-table-column prop="sprofession" label="专业"></el-table-column>
-        <el-table-column label="操作" width="100">
+        <el-table-column prop="status" label="选课状态" width="100">
           <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.status === 'active' ? 'success' : 'danger'"
+            >
+              {{ scope.row.status === "active" ? "可选课" : "不可选课" }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="180">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              :type="scope.row.status === 'active' ? 'warning' : 'success'"
+              @click="toggleStatus(scope.row)"
+            >
+              {{ scope.row.status === "active" ? "禁用" : "启用" }}
+            </el-button>
             <el-button
               type="danger"
               size="mini"
@@ -161,6 +177,43 @@ export default {
                   type: "success",
                 });
                 this.fetchStudents(); // 重新加载数据
+              }
+            })
+            .catch(() => {
+              this.$message.error("服务器无法连接");
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "操作已取消",
+          });
+        });
+    },
+    toggleStatus(student) {
+      const newStatus = student.status === "active" ? "inactive" : "active";
+      const statusText = newStatus === "active" ? "启用" : "禁用";
+
+      this.$confirm(`确定要${statusText}该学生的选课权限吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.axios
+            .post(
+              `student/updateStudentStatus?Sid=${student.sid}&status=${newStatus}`
+            )
+            .then((res) => {
+              if (res.data.code == 200) {
+                this.$message({
+                  showClose: true,
+                  message: `${statusText}成功！`,
+                  type: "success",
+                });
+                this.fetchStudents(); // 重新加载数据
+              } else {
+                this.$message.error(`${statusText}失败`);
               }
             })
             .catch(() => {

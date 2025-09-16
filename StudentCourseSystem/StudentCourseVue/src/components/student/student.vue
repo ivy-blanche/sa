@@ -19,10 +19,6 @@
             <i class="el-icon-date"></i>
             <span slot="title">学生选课</span>
           </el-menu-item>
-          <el-menu-item index="studentGrade">
-            <i class="el-icon-setting"></i>
-            <span slot="title">查看成绩</span>
-          </el-menu-item>
           <el-menu-item index="studentInfo">
             <i class="el-icon-edit"></i>
             <span slot="title">修改个人信息</span>
@@ -32,7 +28,9 @@
       <el-main style="margin-left: 250px">
         <div class="tobar base_shadow">
           <div class="title">学生在线选课系统</div>
-          <el-button class="exit_btn" type="danger" @click="exit">退出</el-button>
+          <el-button class="exit_btn" type="danger" @click="exit"
+            >退出</el-button
+          >
         </div>
         <transition>
           <router-view class="router"></router-view>
@@ -49,29 +47,29 @@ export default {
     return {};
   },
   components: {
-    "user-info": userInfo
+    "user-info": userInfo,
   },
   methods: {
     exit() {
       //清除Cookie
-      document.cookie = "=;"
+      document.cookie = "=;";
       //清除session
       sessionStorage.clear();
       window.location.href = this.COMMON.login_location;
     },
     select(index) {
       this.$router.push("/student/" + index);
+    },
+  },
+  mounted() {
+    if (this.$store.state.identity != "student") {
+      this.$router.push("/");
     }
   },
-  mounted(){
-    if(this.$store.state.identity != 'student'){
-      this.$router.push('/')
-    }
-  }
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .tobar {
   background-color: #fff;
   margin: -20px;

@@ -29,5 +29,6 @@ public class Student {
     private String Sclass;
     private String Sprofession;
     private String Sinstitution;
+    private String status;
     private Date Smodtime;
 }

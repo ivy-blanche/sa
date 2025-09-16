@@ -5,73 +5,21 @@
       <div class="title">填写课程信息：</div>
       <hr />
       <el-form :model="form" ref="form" :rules="rules" label-position="top">
-        <el-form-item label="课程ID" prop="Cid">
-          <el-input
-            v-model="form.Cid"
-            placeholder="请填写该课程的ID"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="课程名称" prop="Cname">
-          <el-input
-            v-model="form.Cname"
-            placeholder="请填写选择该课程名称"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="学分" prop="Ccredit">
-          <el-input
-            v-model="form.Ccredit"
-            placeholder="请填写选择该课程所能获得的学分"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="开课专业" prop="Cbelongpro">
-          <el-input
-            v-model="form.Cbelongpro"
-            placeholder="请填写选择该课程所属的专业"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="周次" prop="Courseweek">
-          <el-input
-            v-model="form.Courseweek"
-            placeholder="请填写选择该课程的周次（例如：1-10周）"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="教学楼" prop="Cteachbuilding">
-          <el-input
-            v-model="form.Cteachbuilding"
-            placeholder="请填写选择该课程的教学楼"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="教室" prop="Cclassroom">
-          <el-input
-            v-model="form.Cclassroom"
-            placeholder="请填写选择该课程的教室"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="课程简介" style="width: 50%">
-          <el-input
-            type="textarea"
-            :autosize="true"
-            v-model="form.Cintroduction"
-          ></el-input>
-        </el-form-item>
-        <el-row>
+        <!-- 第一排: 年级, 院系, 课程类别 -->
+        <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="课程教授年级" prop="Csemester">
-              <el-select v-model="form.Csemester" placeholder="请选择">
-                <el-option
-                  v-for="item in Semester"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
+            <el-form-item label="年级" prop="Csemester">
+              <el-select v-model="form.Csemester" placeholder="请选择年级">
+                <el-option label="2022" value="2022"></el-option>
+                <el-option label="2023" value="2023"></el-option>
+                <el-option label="2024" value="2024"></el-option>
+                <el-option label="2025" value="2025"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-
           <el-col :span="8">
-            <el-form-item label="课程教授院系" prop="Cbelongcoll">
-              <el-select v-model="form.Cbelongcoll" placeholder="请选择">
+            <el-form-item label="院系" prop="Cbelongcoll">
+              <el-select v-model="form.Cbelongcoll" placeholder="请选择院系">
                 <el-option
                   v-for="item in Faculty"
                   :key="item.id"
@@ -81,25 +29,80 @@
               </el-select>
             </el-form-item>
           </el-col>
-
           <el-col :span="8">
             <el-form-item label="课程类别" prop="Ctype">
-              <el-select v-model="form.Ctype" placeholder="请选择">
+              <el-select v-model="form.Ctype" placeholder="请选择课程类别">
                 <el-option label="必修" value="必修"></el-option>
                 <el-option label="选修" value="选修"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-
-          <el-button
-            type="success"
-            round
-            icon="el-icon-circle-plus"
-            style="margin-top: 20px"
-            @click="submit"
-            >添加课程
-          </el-button>
         </el-row>
+
+        <!-- 第二排: 课程ID, 课程名称, 学分 -->
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <el-form-item label="课程ID" prop="Cid">
+              <el-input
+                v-model="form.Cid"
+                placeholder="请填写课程ID"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="课程名称" prop="Cname">
+              <el-input
+                v-model="form.Cname"
+                placeholder="请填写课程名称"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="学分" prop="Ccredit">
+              <el-input
+                v-model="form.Ccredit"
+                placeholder="请填写学分"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 第三排: 周次, 教学楼, 教室 -->
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <el-form-item label="周次" prop="Courseweek">
+              <el-input
+                v-model="form.Courseweek"
+                placeholder="例如：1-10周"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="教学楼" prop="Cteachbuilding">
+              <el-input
+                v-model="form.Cteachbuilding"
+                placeholder="请填写教学楼"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="教室" prop="Cclassroom">
+              <el-input
+                v-model="form.Cclassroom"
+                placeholder="请填写教室"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-button
+          type="success"
+          round
+          icon="el-icon-circle-plus"
+          style="margin-top: 20px"
+          @click="submit"
+          >添加课程
+        </el-button>
       </el-form>
     </div>
   </div>
@@ -264,14 +267,22 @@ export default {
         .post("teacher/insertCourse", param)
         .then((res) => {
           if (res.data.code == 200) {
-            this.$message.success("添加成功，请选择上课时间");
+            this.$message.success("提交成功");
             this.$refs.form.resetFields();
-            this.$router.push("/teacher/addClass");
+          } else {
+            // 处理后端返回的错误消息
+            const errorMsg = res.data.message || "提交失败";
+            this.$message.error(errorMsg);
           }
         })
         .catch((err) => {
           console.log(err);
-          this.$message("服务器无法连接，添加课程失败");
+          if (err.response && err.response.data && err.response.data.message) {
+            // 显示后端返回的具体错误信息
+            this.$message.error(err.response.data.message);
+          } else {
+            this.$message.error("提交失败，请检查网络连接或联系管理员");
+          }
         });
     },
     getfaculty() {

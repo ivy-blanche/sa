@@ -1,55 +1,28 @@
 <template>
   <div id="chooseClass">
-    <h1>学生选课</h1>
     <div class="main">
       <el-row class="course_box card" :gutter="20">
         <div class="title">
           当前可选课程范围：{{ studentInfo.sinstitution }} |
           {{ studentInfo.sprofession }}专业课程
         </div>
-        <el-col
-          :md="12"
-          :lg="8"
-          :xl="6"
-          v-for="item in courseData"
-          :key="item.cid"
-        >
+        <div class="course-list">
           <div
-            class="course"
-            @click="choose(item.cid)"
-            :class="{ choose: item.cid == chooseCourse }"
+            v-for="item in courseData"
+            :key="item.cid"
+            class="course-list-item"
           >
-            <div class="group">
-              <div class="name">{{ item.cname }}</div>
-            </div>
-            <div class="group">
-              <div class="facultyName">{{ item.teacher.tname }}</div>
-            </div>
-            <div class="group">
-              <div class="credit">{{ item.ccredit }}学分</div>
-              <div class="proptype">{{ item.ctype }}</div>
-            </div>
-            <div class="group">
-              <div class="credit">{{ item.courseweek }}</div>
-              <div class="proptype">
-                {{ item.cteachbuilding }}{{ item.cclassroom }}
-              </div>
-            </div>
-            <div class="group">
-              <div class="facultyName">{{ item.cbelongpro }}</div>
-            </div>
+            <span class="course-name">{{ item.cname }}</span>
+            <el-button
+              @click="choose(item)"
+              :type="selectedCourses[item.cid] ? 'success' : 'primary'"
+              size="small"
+              :disabled="selectedCourses[item.cid]"
+            >
+              {{ selectedCourses[item.cid] ? "已选" : "选课" }}
+            </el-button>
           </div>
-        </el-col>
-        <transition>
-          <el-button
-            type="success"
-            icon="el-icon-check"
-            circle
-            v-if="flag && chooseCourse != ''"
-            @click="submit"
-          >
-          </el-button>
-        </transition>
+        </div>
       </el-row>
       <div class="table">
         <div class="class_box card" style="overflow: visible">
@@ -66,61 +39,7 @@
               <div class="class_inner" v-if="item.index == ''"></div>
               <div
                 class="ban"
-                :class="{ choosed: true, error: item.error }"
-                v-if="item.index != ''"
-              ></div>
-            </div>
-          </div>
-
-          <transition>
-            <div
-              class="card tag"
-              v-if="chooseCourse == ''"
-              style="background: #409eff"
-            >
-              请选择左侧您想要选课的课程
-            </div>
-          </transition>
-
-          <transition>
-            <div
-              class="card tag"
-              v-if="flag == false"
-              style="background: #f56c6c"
-            >
-              该课程与已选课程时间冲突，无法选课
-            </div>
-          </transition>
-
-          <transition>
-            <div
-              class="card tag"
-              v-if="flag == true && chooseCourse != ''"
-              style="background: #67c23a"
-            >
-              本节课为可选状态
-            </div>
-          </transition>
-        </div>
-        <div class="class_box card" style="overflow: visible">
-          <div class="tableTitle">所选课程安排表</div>
-          <div class="header">
-            <div class="day">周一</div>
-            <div class="day">周二</div>
-            <div class="day">周三</div>
-            <div class="day">周四</div>
-            <div class="day">周五</div>
-          </div>
-          <div class="choose_card">
-            <div
-              class="class"
-              v-for="(item, index) in chooseCourseClassData"
-              :key="index"
-            >
-              <div class="class_inner" v-if="item.index == ''"></div>
-              <div
-                class="ban"
-                :class="{ choose: item.choose, error: item.error }"
+                :class="{ choosed: true }"
                 v-if="item.index != ''"
               ></div>
             </div>
@@ -147,10 +66,8 @@ export default {
       },
       studentInfo: {},
       courseData: [],
-      chooseCourseClassData: [],
       classTable: [],
-      chooseCourse: "",
-      flag: true,
+      selectedCourses: {}, // 跟踪已选课程
     };
   },
   methods: {
@@ -165,7 +82,24 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          this.$message("服务器无法连接");
+          if (err.response) {
+            const status = err.response.status;
+            if (status === 404) {
+              this.$message.error("请求的资源不存在");
+            } else if (status === 500) {
+              this.$message.error("服务器内部错误，请联系管理员");
+            } else {
+              this.$message.error(`服务器错误: ${status}`);
+            }
+          } else if (err.request) {
+            if (err.code === "ECONNABORTED") {
+              this.$message.error("请求超时，请检查网络连接");
+            } else {
+              this.$message.error("网络错误，请检查网络连接");
+            }
+          } else {
+            this.$message.error("发生未知错误");
+          }
         });
     },
     getWeekDay(weekday) {
@@ -203,7 +137,24 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          this.$message("服务器无法连接，获取学生可选课程失败");
+          if (err.response) {
+            const status = err.response.status;
+            if (status === 404) {
+              this.$message.error("请求的资源不存在");
+            } else if (status === 500) {
+              this.$message.error("服务器内部错误，请联系管理员");
+            } else {
+              this.$message.error(`服务器错误: ${status}`);
+            }
+          } else if (err.request) {
+            if (err.code === "ECONNABORTED") {
+              this.$message.error("请求超时，请检查网络连接");
+            } else {
+              this.$message.error("网络错误，请检查网络连接");
+            }
+          } else {
+            this.$message.error("发生未知错误");
+          }
         });
     },
     // parseData:将获取到的classData（学生已选课节）填充数据，转存到classTable中
@@ -280,86 +231,125 @@ export default {
       }
       return finalData;
     },
-    // 连带执行chooseClassToClassData
-    choose(id) {
-      this.chooseCourse = id;
+    // 直接提交选课请求
+    choose(course) {
+      this.$confirm(`确定要选择《${course.cname}》课程吗？`, "确认选课", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          // 获取课程详细信息
+          this.axios
+            .get("teacher/getOneCourse/" + course.cid)
+            .then((res) => {
+              if (res.data.code == 200) {
+                var r = res.data.data;
+                // 填充课程信息
+                for (var i in this.obj) {
+                  this.obj[i] = r[i] == null ? "" : r[i];
+                }
+                // 直接提交选课请求
+                this.submit();
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              if (err.response) {
+                const status = err.response.status;
+                if (status === 404) {
+                  this.$message.error("课程信息不存在");
+                } else if (status === 500) {
+                  this.$message.error("服务器内部错误，请联系管理员");
+                } else {
+                  this.$message.error(`服务器错误: ${status}`);
+                }
+              } else if (err.request) {
+                if (err.code === "ECONNABORTED") {
+                  this.$message.error("请求超时，请检查网络连接");
+                } else {
+                  this.$message.error("网络错误，请检查网络连接");
+                }
+              } else {
+                this.$message.error("发生未知错误");
+              }
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消选课",
+          });
+        });
+    },
+
+    // 初始化已选课程状态
+    initializeSelectedCourses() {
       this.axios
-        .get("teacher/getOneCourse/" + this.chooseCourse)
+        .get("student/getSchedule/" + this.$store.state.id)
         .then((res) => {
           if (res.data.code == 200) {
-            var r = res.data.data;
-            for (var i in this.obj) {
-              this.obj[i] = r[i] == null ? "" : r[i];
-            }
-            // console.log(this.obj)
-            this.chooseCourseClassData = [r];
-            this.chooseClassToClassData();
+            res.data.data.forEach((coursePlan) => {
+              this.selectedCourses[coursePlan.cid] = true;
+            });
           }
         })
         .catch((err) => {
           console.log(err);
-          this.$message("服务器无法连接，获取选择课程课节失败");
         });
-    },
-    chooseClassToClassData() {
-      //1. chooseCourseClassData是选择课程的时间安排表
-      //2.  调用parseData填充chooseCourseClassData数据
-      this.chooseCourseClassData = this.parseData(
-        this.chooseCourseClassData,
-        true
-      );
-      this.flag = true;
-      // =====初始化课程表=======
-      for (var i = 0; i < this.chooseCourseClassData.length; ++i) {
-        // 3. 为chooseCourseClassData添加choose属性
-        // console.log(i)
-        this.chooseCourseClassData[i].choose = true;
-        let index = this.chooseCourseClassData[i].index;
-        // 5. 将chooseCourseClassData与classData中的数据做比对，如果比对冲突，将this.flag设置为false，并且将冲突的对象添加ferror: true字段
-        this.classTable.some((item) => {
-          if (item.index == index && item.index != "" && index != "") {
-            this.chooseCourseClassData[i].error = true;
-            this.flag = false;
-            return true;
-          }
-        });
-      }
     },
     submit() {
+      const coursePlanData = {
+        Cname: this.obj.cname,
+        Sid: this.$store.state.id,
+        Cid: this.obj.cid,
+        Tid: this.obj.tid,
+        Monday: this.obj.monday,
+        Tuesday: this.obj.tuesday,
+        Wednesday: this.obj.wednesday,
+        Thursday: this.obj.thursday,
+        Friday: this.obj.friday,
+      };
+
       this.axios
-        .post(
-          "student/insertCoursePlan?Cname=" +
-            this.obj.cname +
-            "&Sid=" +
-            this.$store.state.id +
-            "&Cid=" +
-            this.obj.cid +
-            "&Tid=" +
-            this.obj.tid +
-            "&Monday=" +
-            this.obj.monday +
-            "&Tuesday=" +
-            this.obj.tuesday +
-            "&Wednesday=" +
-            this.obj.wednesday +
-            "&Thursday=" +
-            this.obj.thursday +
-            "&Friday=" +
-            this.obj.friday
-        )
+        .post("student/insertCoursePlan", coursePlanData)
         .then((res) => {
           if (res.data.code == 200) {
+            // 更新已选课程状态
+            this.selectedCourses[this.obj.cid] = true;
             this.$message({
               showClose: true,
               message: "选课成功",
               type: "success",
             });
-            this.$router.push("/student");
+            // 立即刷新课表显示
+            this.getStudentClass();
+            // 不跳转，留在当前页面继续选课
+          } else {
+            // 处理后端返回的错误信息
+            this.$message.error(res.data.message || "选课失败");
           }
         })
         .catch((err) => {
           console.log(err);
-          this.$message("服务器无法连接");
+          if (err.response) {
+            const status = err.response.status;
+            if (status === 404) {
+              this.$message.error("请求的资源不存在");
+            } else if (status === 500) {
+              this.$message.error("服务器内部错误，请联系管理员");
+            } else {
+              this.$message.error(`服务器错误: ${status}`);
+            }
+          } else if (err.request) {
+            if (err.code === "ECONNABORTED") {
+              this.$message.error("请求超时，请检查网络连接");
+            } else {
+              this.$message.error("网络错误，请检查网络连接");
+            }
+          } else {
+            this.$message.error("发生未知错误");
+          }
         });
     },
   },
@@ -370,13 +360,44 @@ export default {
         if (res.data.code == 200) {
           this.studentInfo = res.data.data;
           // console.log(this.studentInfo)
+
+          // 检查学生选课状态
+          if (this.studentInfo.status !== "active") {
+            this.$message.warning(
+              "对不起，当前您不处于选课阶段，如有需要，请与管理员联系！"
+            );
+            // 清空课程数据，防止显示选课界面
+            this.courseData = [];
+            return;
+          }
+
+          // 状态正常，继续加载选课数据
+          this.getStudentClass(); //连带执行parseData
+          this.getCourseData();
+          this.initializeSelectedCourses(); // 初始化已选课程状态
         }
       })
-      .catch(() => {
-        this.$message("服务器连接异常");
+      .catch((err) => {
+        console.log(err);
+        if (err.response) {
+          const status = err.response.status;
+          if (status === 404) {
+            this.$message.error("学生信息不存在");
+          } else if (status === 500) {
+            this.$message.error("服务器内部错误，请联系管理员");
+          } else {
+            this.$message.error(`服务器错误: ${status}`);
+          }
+        } else if (err.request) {
+          if (err.code === "ECONNABORTED") {
+            this.$message.error("请求超时，请检查网络连接");
+          } else {
+            this.$message.error("网络错误，请检查网络连接");
+          }
+        } else {
+          this.$message.error("发生未知错误");
+        }
       });
-    this.getStudentClass(); //连带执行parseData
-    this.getCourseData();
   },
 };
 </script>
@@ -446,7 +467,7 @@ export default {
       }
     }
 
-    .el-button {
+    .el-button.is-circle {
       width: 50px;
       height: 50px;
       position: absolute;
@@ -506,6 +527,47 @@ export default {
   .tag {
     margin: 360px -20px;
     color: white;
+  }
+
+  .course-list {
+    .course-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #ebeef5;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #f5f7fa;
+      }
+
+      .course-name {
+        font-size: 16px;
+        font-weight: 500;
+        color: #606266;
+      }
+
+      .course-list-item .el-button {
+        margin-left: auto; /* 将按钮推到最右边 */
+        flex-shrink: 0; /* 防止按钮被压缩 */
+      }
+    }
+  }
+
+  .conflict-prompt {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 }
 </style>

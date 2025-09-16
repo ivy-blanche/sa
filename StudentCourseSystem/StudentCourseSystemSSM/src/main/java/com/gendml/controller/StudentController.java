@@ -3,7 +3,6 @@ package com.gendml.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gendml.entity.*;
 import com.gendml.mapper.CoursePlanMapper;
-import com.gendml.mapper.SCMapper;
 import com.gendml.service.CourseService;
 import com.gendml.service.StudentService;
 import com.gendml.service.TeacherService;
@@ -35,8 +34,6 @@ public class StudentController {
     @Autowired
     private CoursePlanMapper coursePlanMapper;
 
-    @Autowired
-    private SCMapper scMapper;
 
 
     @PostMapping("/login")
@@ -84,18 +81,14 @@ public class StudentController {
         return ResponseResult.error();
     }
 
-    //管理员删除学生->清除学生信息、学生成绩信息、课程表信息
+    //管理员删除学生->清除学生信息、课程表信息
     @PostMapping("deleteStudent")
     public ResponseResult<Void> deleteStudent(@RequestParam("Sid") String Sid) {
         //删除学生表对应学生信息
         int res = studentService.deleteStudentBySid(Sid);
-        //删除成绩表对应信息
-        QueryWrapper<SC> qw1 = new QueryWrapper<>();
-        qw1.eq("Sid",Sid);
-        scMapper.delete(qw1);
         //删除课程表对应信息
         QueryWrapper<CoursePlan> qw2 = new QueryWrapper<>();
-        qw1.eq("Sid",Sid);
+        qw2.eq("Sid",Sid);
         coursePlanMapper.delete(qw2);
         if (res != 0) {
             return ResponseResult.success();
@@ -133,18 +126,19 @@ public class StudentController {
         return ResponseResult.error();
     }
 
-    //选课(自动同步成绩表)
+    //选课
     @PostMapping("insertCoursePlan")
-    public ResponseResult<Void> getOneStudent(CoursePlan coursePlan) {
-        int res = coursePlanMapper.insert(coursePlan);
-        if (res != 0) {
-            scMapper.insert(new SC().setSid(coursePlan.getSid())
-                    .setCid(coursePlan.getCid())
-                    .setTid(coursePlan.getTid())
-            );
-            return ResponseResult.success();
+    public ResponseResult<Void> insertCoursePlan(@RequestBody CoursePlan coursePlan) {
+        try {
+            int res = coursePlanMapper.insert(coursePlan);
+            if (res != 0) {
+                return ResponseResult.success();
+            }
+            return ResponseResult.error();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseResult.error("选课失败: " + e.getMessage());
         }
-        return ResponseResult.error();
     }
 
 
@@ -157,24 +151,6 @@ public class StudentController {
                 coursePlan.setCourse(courseService.queryOneCourseByCid(coursePlan.getCid()));
 //                coursePlan.setStudent(studentService.queryOneStudentBySid(coursePlan.getSid()));
                 coursePlan.setTeacher(teacherService.queryOneTeacherByTid(coursePlan.getTid()));
-            }
-            return ResponseResult.success(res);
-        }
-        return ResponseResult.error();
-    }
-
-    //查成绩
-    @GetMapping("getGrade/{Sid}")
-    public ResponseResult<List<SC>> getGrade(@PathVariable("Sid") String Sid){
-        QueryWrapper<SC> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("Sid",Sid);
-        List<SC> res = scMapper.selectList(queryWrapper);
-        if(res != null){
-            for (SC sc : res) {
-                Course course = courseService.queryOneCourseByCid(sc.getCid());
-                sc.setCourse(course);
-//                coursePlan.setStudent(studentService.queryOneStudentBySid(coursePlan.getSid());
-                sc.setTeacher(teacherService.queryOneTeacherByTid(course.getTid()));
             }
             return ResponseResult.success(res);
         }
@@ -203,6 +179,21 @@ public class StudentController {
         result.put("total", total);
         
         return ResponseResult.success(result);
+    }
+
+    // 更新学生选课状态
+    @PostMapping("updateStudentStatus")
+    public ResponseResult<Void> updateStudentStatus(@RequestParam("Sid") String sid,
+                                                    @RequestParam("status") String status) {
+        Student student = new Student();
+        student.setSid(sid);
+        student.setStatus(status);
+        
+        int res = studentService.updateStudent(student);
+        if (res != 0) {
+            return ResponseResult.success();
+        }
+        return ResponseResult.error("更新状态失败");
     }
 
 

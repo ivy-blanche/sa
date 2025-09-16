@@ -1,3 +1,4 @@
+com\gendml\entity\Audit.class
 com\gendml\entity\ResponseResult$ResultCode.class
 com\gendml\service\TeacherService.class
 com\gendml\mapper\SCMapper.class
@@ -19,6 +20,7 @@ com\gendml\entity\Student.class
 com\gendml\mapper\StudentMapper.class
 com\gendml\service\impl\CourseServiceImpl.class
 com\gendml\entity\SC.class
+com\gendml\mapper\AuditMapper.class
 com\gendml\controller\StudentController.class
 com\gendml\entity\Course.class
 com\gendml\mapper\CoursePlanMapper.class

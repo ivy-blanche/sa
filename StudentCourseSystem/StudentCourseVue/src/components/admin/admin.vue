@@ -23,6 +23,10 @@
             <i class="el-icon-setting"></i>
             <span slot="title">管理教师</span>
           </el-menu-item>
+          <el-menu-item index="manageAudit">
+            <i class="el-icon-document-checked"></i>
+            <span slot="title">课程审核</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main style="margin-left: 250.5px">

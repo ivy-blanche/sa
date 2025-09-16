@@ -59,6 +59,8 @@
                 </bean>
             </array>
         </property>
+        <!-- 设置全局配置 -->
+        <property name="globalConfig" ref="globalConfig"/>
     </bean>
     <!--分页拦截器-->
     <bean id="paginationInnerInterceptor" class="com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor">

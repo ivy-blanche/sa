@@ -1,12 +1,12 @@
 module.exports = {
   configureWebpack: {
     devServer: {
+      host: "0.0.0.0",
       port: 80,
-      host: "localhost",
       proxy: {
         "/api": {
           // '/api'是代理标识，用于告诉node，url前面是/api的就是使用代理的
-          target: "http://localhost:9000", //目标地址，一般是指后台服务器地址
+          target: "http://localhost:9000", //目标地址，Tomcat运行在9000端口
           changeOrigin: true, //表示是否改变原域名
           ws: true, //表示WebSocket协议
           pathRewrite: {

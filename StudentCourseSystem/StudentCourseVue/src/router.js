@@ -8,16 +8,12 @@ import index from "./components/index.vue";
 import student from "./components/student/student.vue";
 import studentCourse from "./components/student/studentCourse.vue";
 import chooseClass from "./components/student/chooseClass.vue";
-import studentGrade from "./components/student/studentGrade.vue";
 import studentInfo from "./components/student/studentInfo.vue";
 
 // teacher
 import teacher from "./components/teacher/teacher.vue";
-import teacherCourse from "./components/teacher/teacherCourse.vue";
 import addCourse from "./components/teacher/addCourse.vue";
 import addClass from "./components/teacher/addClass.vue";
-import manageGrade from "./components/teacher/manageGrade.vue";
-import courseGrade from "./components/teacher/courseGrade.vue";
 import teacherInfo from "./components/teacher/teacherInfo.vue";
 
 //  admin
@@ -25,6 +21,7 @@ import admin from "./components/admin/admin.vue";
 import schoolInfo from "./components/admin/schoolInfo.vue";
 import manageStudent from "./components/admin/manageStudent.vue";
 import manageTeacher from "./components/admin/manageTeacher.vue";
+import manageAudit from "./components/admin/manageAudit.vue";
 
 Vue.use(Router);
 
@@ -56,10 +53,6 @@ var router = new Router({
           component: chooseClass,
         },
         {
-          path: "studentGrade",
-          component: studentGrade,
-        },
-        {
           path: "studentInfo",
           component: studentInfo,
         },
@@ -67,13 +60,9 @@ var router = new Router({
     },
     {
       path: "/teacher",
-      redirect: "/teacher/teacherCourse",
+      redirect: "/teacher/addCourse",
       component: teacher,
       children: [
-        {
-          path: "teacherCourse",
-          component: teacherCourse,
-        },
         {
           path: "addCourse",
           component: addCourse,
@@ -81,14 +70,6 @@ var router = new Router({
         {
           path: "addClass",
           component: addClass,
-        },
-        {
-          path: "manageGrade",
-          component: manageGrade,
-        },
-        {
-          path: "manageGrade/:cid",
-          component: courseGrade,
         },
         {
           path: "teacherInfo",
@@ -113,11 +94,15 @@ var router = new Router({
           path: "manageTeacher",
           component: manageTeacher,
         },
+        {
+          path: "manageAudit",
+          component: manageAudit,
+        },
       ],
     },
   ],
 });
-// <router-link :to="...">（声明式）    ==     router.push(...)（编程式）
+
 // 暴露完路由之后，在其他组件中可以通过 "this.$router.push('/路由名')" 进行转发
 
 // 每次转发之前调用这个钩子函数

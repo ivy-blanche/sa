@@ -55,7 +55,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         var schedule = {
           cname: data[i].cname,
-          tname: data[i].teacher.tname,
+          tname: data[i].teacher ? data[i].teacher.tname : "",
           schedule: {
             monday: data[i].monday == null ? "" : data[i].monday,
             tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
@@ -67,8 +67,8 @@ export default {
           },
           index: "",
           courseweek: data[i].courseweek,
-          cclassroom: data[i].course.cclassroom,
-          cteachbuilding: data[i].course.cteachbuilding,
+          cclassroom: data[i].course ? data[i].course.cclassroom : "",
+          cteachbuilding: data[i].course ? data[i].course.cteachbuilding : "",
         };
         for (var k in schedule.schedule) {
           var timeList = schedule.schedule[k].split(",");
@@ -76,11 +76,13 @@ export default {
           for (var j of timeList) {
             var tmp = {
               cname: data[i].cname,
-              tname: data[i].teacher.tname,
+              tname: data[i].teacher ? data[i].teacher.tname : "",
               index: (this.getWeekDay(k) - 1) * 5 + parseInt(j),
               courseweek: data[i].courseweek,
-              cclassroom: data[i].course.cclassroom,
-              cteachbuilding: data[i].course.cteachbuilding,
+              cclassroom: data[i].course ? data[i].course.cclassroom : "",
+              cteachbuilding: data[i].course
+                ? data[i].course.cteachbuilding
+                : "",
             };
             scheduleList.push(tmp);
           }
@@ -117,7 +119,27 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          this.$message("服务器无法连接");
+          if (err.response) {
+            // 服务器有响应，但状态码不在2xx范围内
+            const status = err.response.status;
+            if (status === 404) {
+              this.$message.error("请求的资源不存在");
+            } else if (status === 500) {
+              this.$message.error("服务器内部错误，请联系管理员");
+            } else {
+              this.$message.error(`服务器错误: ${status}`);
+            }
+          } else if (err.request) {
+            // 请求已发出，但没有收到响应
+            if (err.code === "ECONNABORTED") {
+              this.$message.error("请求超时，请检查网络连接");
+            } else {
+              this.$message.error("网络错误，请检查网络连接");
+            }
+          } else {
+            // 其他错误
+            this.$message.error("发生未知错误");
+          }
         });
     },
     notify() {

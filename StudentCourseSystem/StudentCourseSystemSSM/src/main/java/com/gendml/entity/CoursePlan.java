@@ -22,8 +22,8 @@ import javax.persistence.Transient;
 @Accessors(chain = true)
 @TableName("courseplan")
 public class CoursePlan {
-    @TableId
     private String Cname;
+    @TableId
     private String Cid;
     private String Tid;
     private String Sid;

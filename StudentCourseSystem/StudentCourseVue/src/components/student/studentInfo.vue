@@ -1,47 +1,48 @@
 <template>
   <div id="studentInfo">
     <div class="container">
-      <h1>修改个人信息</h1>
+      <h1>重置密码</h1>
       <div class="card semester">
         <el-descriptions title="" :column="2" border>
+          <!-- 第一行：学号与姓名 -->
           <el-descriptions-item label="学号">{{
             studentInfo.sid
           }}</el-descriptions-item>
           <el-descriptions-item label="姓名">{{
             studentInfo.sname
           }}</el-descriptions-item>
+
+          <!-- 第二行：学院与专业 -->
+          <el-descriptions-item label="学院">{{
+            studentInfo.sinstitution
+          }}</el-descriptions-item>
+          <el-descriptions-item label="专业">{{
+            studentInfo.sprofession
+          }}</el-descriptions-item>
+
+          <!-- 第三行：年级与班级 -->
+          <el-descriptions-item label="年级">{{
+            studentInfo.sgrade
+          }}</el-descriptions-item>
+          <el-descriptions-item label="班级">{{
+            studentInfo.sclass
+          }}</el-descriptions-item>
+
+          <!-- 第四行：性别与年龄 -->
           <el-descriptions-item label="性别">{{
             studentInfo.ssex
           }}</el-descriptions-item>
           <el-descriptions-item label="年龄">{{
             studentInfo.sage
           }}</el-descriptions-item>
-          <el-descriptions-item label="身份证号">{{
-            studentInfo.sidcard
-          }}</el-descriptions-item>
-          <el-descriptions-item label="年级">{{
-            studentInfo.sgrade
-          }}</el-descriptions-item>
-          <el-descriptions-item label="专业">{{
-            studentInfo.sprofession
-          }}</el-descriptions-item>
-          <el-descriptions-item label="班级">{{
-            studentInfo.sclass
-          }}</el-descriptions-item>
+
+          <!-- 第五行：账号类型与密码 -->
           <el-descriptions-item label="账号类型">
             <el-tag size="small">{{
               this.$store.state.identity | identity
             }}</el-tag>
           </el-descriptions-item>
-          <el-descriptions-item label="学院">{{
-            studentInfo.sinstitution
-          }}</el-descriptions-item>
-          <el-descriptions-item label="密码">{{
-            studentInfo.spassword
-          }}</el-descriptions-item>
-          <el-descriptions-item label="修改时间">{{
-            studentInfo.smodtime
-          }}</el-descriptions-item>
+          <el-descriptions-item label="密码">******</el-descriptions-item>
         </el-descriptions>
         <el-row style="margin-top: 10px">
           <el-button
@@ -49,86 +50,62 @@
             size=""
             style="float: right"
             @click="dialogFormVisible = true"
-            >修改
+            >修改密码
           </el-button>
         </el-row>
 
-        <el-dialog title="修改信息" :visible.sync="dialogFormVisible">
+        <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
           <el-form
-            :model="studentInfo"
+            :model="passwordForm"
             :rules="rules"
-            label-width="80px"
+            label-width="100px"
             :label-position="'left'"
-            ref="studentInfo"
+            ref="passwordForm"
           >
-            <el-form-item label="学号" prop="sid">
+            <el-form-item label="学号">
               <el-input v-model="studentInfo.sid" disabled></el-input>
             </el-form-item>
-            <el-form-item label="姓名" prop="sname">
+            <el-form-item label="姓名">
               <el-input v-model="studentInfo.sname" disabled></el-input>
             </el-form-item>
-            <el-form-item label="性别" prop="ssex">
-              <el-radio-group v-model="studentInfo.ssex">
-                <el-radio label="男"></el-radio>
-                <el-radio label="女"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="类型">
-              <el-tag size="">{{
-                this.$store.state.identity | identity
-              }}</el-tag>
-            </el-form-item>
-            <el-form-item label="身份证号" prop="sidcard">
-              <el-input v-model="studentInfo.sidcard"></el-input>
-            </el-form-item>
-            <el-form-item label="入学时间" prop="sgrade">
-              <el-date-picker
-                style="width: 100%"
-                v-model="studentInfo.sgrade"
-                type="year"
-                placeholder="选择年"
-                value-format="yyyy"
-              ></el-date-picker>
-            </el-form-item>
-            <el-form-item label="专业" prop="sprofession">
-              <el-input v-model="studentInfo.sprofession"></el-input>
-            </el-form-item>
-            <el-form-item label="班级" prop="sclass">
-              <el-input v-model="studentInfo.sclass"></el-input>
-            </el-form-item>
-            <el-form-item label="选择学院" prop="sinstitution">
-              <el-select
-                style="width: 28%"
-                v-model="studentInfo.sinstitution"
-                placeholder="请选择学院"
+            <el-form-item label="当前密码" prop="currentPassword">
+              <el-input
+                v-model="passwordForm.currentPassword"
+                type="password"
+                show-password
+                @blur="validateCurrentPassword"
+              ></el-input>
+              <div
+                v-if="currentPasswordError"
+                style="color: red; font-size: 12px; margin-top: 5px"
               >
-                <el-option
-                  v-for="item in Sinstitution"
-                  :key="item.id"
-                  :label="item"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
+                {{ currentPasswordError }}
+              </div>
             </el-form-item>
-            <el-form-item label="密码" prop="spassword">
-              <el-input v-model="studentInfo.spassword"></el-input>
+            <el-form-item label="新密码" prop="newPassword">
+              <el-input
+                v-model="passwordForm.newPassword"
+                type="password"
+                show-password
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="确认新密码" prop="confirmPassword">
+              <el-input
+                v-model="passwordForm.confirmPassword"
+                type="password"
+                show-password
+              ></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button
               @click="
                 dialogFormVisible = false;
-                updateStudentArray();
+                resetForm();
               "
               >取 消</el-button
             >
-            <el-button
-              type="primary"
-              @click="
-                dialogFormVisible = false;
-                onSubmit();
-              "
+            <el-button type="primary" @click="validateAndSubmit"
               >确 定</el-button
             >
           </div>
@@ -142,91 +119,138 @@
 export default {
   data() {
     return {
-      studentInfo: {},
-      form: {
-        Sid: "",
-        Sname: "",
-        Ssex: "",
-        Sage: "",
-        Sidcard: "",
+      studentInfo: {
+        sid: "",
+        sname: "",
+        ssex: "",
+        sage: "",
         sgrade: "",
-        Sprofession: "",
-        Sclass: "",
-        Sinstitution: "",
-        Spassword: "",
-        Smodtime: "",
+        sprofession: "",
+        sclass: "",
+        sinstitution: "",
+        spassword: "",
       },
-      dialogTableVisible: false,
+      passwordForm: {
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+      currentPasswordValid: false,
+      currentPasswordError: "",
       dialogFormVisible: false,
       rules: {
-        sname: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        ssex: [{ required: true, message: "请输入性别", trigger: "blur" }],
-        sidcard: [
-          { required: true, message: "请输入身份证号", trigger: "blur" },
+        currentPassword: [
+          { required: true, message: "请输入当前密码", trigger: "blur" },
         ],
-        sprofession: [
-          { required: true, message: "请输入专业", trigger: "blur" },
+        newPassword: [
+          { required: true, message: "请输入新密码", trigger: "blur" },
+          { min: 6, message: "密码长度不能少于6位", trigger: "blur" },
         ],
-        sclass: [{ required: true, message: "请输入班级", trigger: "blur" }],
-        spassword: [{ required: true, message: "请输入密码", trigger: "blur" }],
-        sinstitution: [
+        confirmPassword: [
+          { required: true, message: "请确认新密码", trigger: "blur" },
           {
-            required: true,
-            message: "请选择学院",
-            trigger: ["blur", "change"],
-          },
-        ],
-        sgrade: [
-          {
-            required: true,
-            message: "请选择入学时间",
-            trigger: ["blur", "change"],
+            validator: (rule, value, callback) => {
+              if (value !== this.passwordForm.newPassword) {
+                callback(new Error("两次输入密码不一致"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
           },
         ],
       },
-      formLabelWidth: "120px",
-      Sinstitution: [],
     };
   },
   methods: {
-    onSubmit() {
-      this.form.Sid = this.studentInfo.sid;
-      this.form.Sname = this.studentInfo.sname;
-      this.form.Ssex = this.studentInfo.ssex;
-      this.form.Sage = this.studentInfo.sage;
-      this.form.Sidcard = this.studentInfo.sidcard;
-      this.form.Sgrade = this.studentInfo.sgrade;
-      this.form.Sprofession = this.studentInfo.sprofession;
-      this.form.Sclass = this.studentInfo.sclass;
-      this.form.Sinstitution = this.studentInfo.sinstitution;
-      this.form.Spassword = this.studentInfo.spassword;
-      this.form.Smodtime = new Date().toLocaleString();
-      var parmas = this.$qs.stringify(this.form);
-      this.$refs.studentInfo.validate((valid) => {
+    validateAndSubmit() {
+      this.$refs.passwordForm.validate((valid) => {
         if (valid) {
+          // 首先验证当前密码是否正确
+          if (
+            this.passwordForm.currentPassword !== this.studentInfo.spassword
+          ) {
+            this.$message.error("当前密码输入错误");
+            return;
+          }
+
+          // 验证新密码和确认密码是否一致
+          if (
+            this.passwordForm.newPassword !== this.passwordForm.confirmPassword
+          ) {
+            this.$message.error("两次输入的新密码不一致");
+            return;
+          }
+
+          // 准备更新数据
+          const updateData = {
+            Sid: this.studentInfo.sid,
+            Spassword: this.passwordForm.newPassword,
+            Smodtime: new Date().toLocaleString(),
+          };
+
+          // 发送更新请求
           this.axios
-            .post("student/updateStudent", parmas)
+            .post("student/updateStudent", this.$qs.stringify(updateData))
             .then((res) => {
               if (res.data.code == 200) {
-                this.$message.success("修改成功");
+                this.$message.success("密码修改成功，请重新登录");
+                this.dialogFormVisible = false;
+                this.resetForm();
+                // 更新本地存储的密码信息
+                this.studentInfo.spassword = this.passwordForm.newPassword;
+
+                // 自动退出当前账户
+                // 清除Cookie
+                document.cookie = "=;";
+                // 清除session
+                sessionStorage.clear();
+                // 跳转到登录页面
+                window.location.href = "/login.html";
+              } else {
+                this.$message.error("密码修改失败");
               }
             })
             .catch((err) => {
               console.log(err);
-              this.$message("接口异常，无法连接服务器");
+              this.$message.error("接口异常，无法连接服务器");
             });
         } else {
+          this.$message.error("请填写完整的密码信息");
           return false;
         }
       });
+    },
+    validateCurrentPassword() {
+      if (this.passwordForm.currentPassword) {
+        if (this.passwordForm.currentPassword === this.studentInfo.spassword) {
+          this.currentPasswordValid = true;
+          this.currentPasswordError = "";
+        } else {
+          this.currentPasswordValid = false;
+          this.currentPasswordError = "当前密码输入错误";
+        }
+      } else {
+        this.currentPasswordValid = false;
+        this.currentPasswordError = "请输入当前密码";
+      }
+    },
+    resetForm() {
+      this.passwordForm = {
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      };
+      this.currentPasswordValid = false;
+      this.currentPasswordError = "";
     },
     updateStudentArray() {
       this.axios
         .get("student/getOneStudent/" + this.$store.state.id)
         .then((res) => {
           if (res.data.code == 200) {
+            // 保留所有字段用于显示
             this.studentInfo = res.data.data;
-            // console.log(this.studentInfo)
           }
         })
         .catch((err) => {
@@ -237,18 +261,6 @@ export default {
   },
   mounted() {
     this.updateStudentArray();
-    this.axios
-      .get("queryFaculty")
-      .then((res) => {
-        for (var ele of res.data.data) this.Sinstitution.push(ele.fname);
-      })
-      .catch(() => {
-        this.$message({
-          showClose: true,
-          message: "无法获取学院信息，请检查接口是否正常！",
-          type: "error",
-        });
-      });
   },
 };
 </script>

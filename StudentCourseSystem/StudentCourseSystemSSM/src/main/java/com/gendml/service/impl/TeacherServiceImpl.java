@@ -92,13 +92,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Course> queryMySchedules(String tid) {
-        QueryWrapper<Course> qw = new QueryWrapper<>();
-        qw.eq("Tid", tid);
-        return courseMapper.selectList(qw);
-    }
-
-    @Override
     public List<Teacher> queryTeachersByCondition(Teacher teacher, int currentPage, int size) {
         QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
         

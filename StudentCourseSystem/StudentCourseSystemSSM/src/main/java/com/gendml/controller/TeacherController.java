@@ -2,6 +2,7 @@ package com.gendml.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gendml.entity.*;
+import com.gendml.mapper.AuditMapper;
 import com.gendml.mapper.CourseMapper;
 import com.gendml.mapper.CoursePlanMapper;
 import com.gendml.mapper.SCMapper;
@@ -12,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Зөндөө
@@ -42,6 +40,9 @@ public class TeacherController {
 
     @Autowired
     private SCMapper scMapper;
+
+    @Autowired
+    private AuditMapper auditMapper;
     
 
     @PostMapping("/login")
@@ -74,12 +75,49 @@ public class TeacherController {
      * */
     @PostMapping("insertCourse")
     public ResponseResult<Void> insertCourse(Course Course){
-        //
-        int res = courseService.insertCourse(Course);
-        if(res != 0){
-            return ResponseResult.success();
+        try {
+            log.info("开始处理课程审核申请，课程ID: {}", Course.getCid());
+            
+            // 创建审核记录
+            Audit audit = new Audit();
+            // 复制课程字段
+            audit.setCid(Course.getCid());
+            audit.setTid(Course.getTid());
+            audit.setCname(Course.getCname());
+            audit.setCcredit(Course.getCcredit());
+            audit.setCtype(Course.getCtype());
+            audit.setCbelongcoll(Course.getCbelongcoll());
+            audit.setCbelongpro(Course.getCbelongpro());
+            audit.setMonday(Course.getMonday());
+            audit.setTuesday(Course.getTuesday());
+            audit.setWednesday(Course.getWednesday());
+            audit.setThursday(Course.getThursday());
+            audit.setFriday(Course.getFriday());
+            audit.setSaturday(Course.getSaturday());
+            audit.setSunday(Course.getSunday());
+            audit.setCsemester(Course.getCsemester());
+            audit.setCourseweek(Course.getCourseweek());
+            audit.setCclassroom(Course.getCclassroom());
+            audit.setCteachbuilding(Course.getCteachbuilding());
+            audit.setCmodtime(Course.getCmodtime());
+            // 设置审核状态为待审核
+            audit.setStatus("pending");
+            audit.setSubmitTime(new Date());
+            
+            log.debug("审核记录对象: {}", audit);
+            
+            int res = auditMapper.insert(audit);
+            if(res != 0){
+                log.info("课程审核申请提交成功，课程ID: {}", Course.getCid());
+                return ResponseResult.success();
+            } else {
+                log.warn("课程审核申请插入失败，课程ID: {}", Course.getCid());
+                return ResponseResult.error("审核申请提交失败");
+            }
+        } catch (Exception e) {
+            log.error("插入审核记录时发生异常，课程ID: {}", Course.getCid(), e);
+            return ResponseResult.error("服务器内部错误: " + e.getMessage());
         }
-        return ResponseResult.error();
     }
 
     @PostMapping("deleteCourse")
@@ -138,6 +176,24 @@ public class TeacherController {
             return ResponseResult.success(res);
         }
         return ResponseResult.error();
+    }
+
+    // 查询教师课程表
+    @GetMapping("getSchedule/{Tid}")
+    public ResponseResult<List<Course>> getSchedule(@PathVariable("Tid") String Tid) {
+        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("Tid", Tid);
+        List<Course> courses = courseMapper.selectList(queryWrapper);
+        
+        if (courses != null && !courses.isEmpty()) {
+            for (Course course : courses) {
+                Teacher teacher = teacherService.queryOneTeacherByTid(course.getTid());
+                course.setTeacher(teacher);
+            }
+            return ResponseResult.success(courses);
+        }
+        List<Course> emptyList = new ArrayList<>();
+        return ResponseResult.<List<Course>>error("该教师暂无课程", emptyList);
     }
 
 
@@ -214,17 +270,6 @@ public class TeacherController {
                                                         @PathVariable("size") int size){
         List<Teacher> res = teacherService.queryAllTeacher(currentPage, size);
         if(res != null){
-            return ResponseResult.success(res);
-        }
-        return ResponseResult.error();
-    }
-
-    //查询教师课表
-    @GetMapping("getSchedule/{Tid}")
-    public ResponseResult<List<Course>> getSchedule(@PathVariable("Tid") String tid) {
-
-        List<Course> res = teacherService.queryMySchedules(tid);
-        if (res != null) {
             return ResponseResult.success(res);
         }
         return ResponseResult.error();

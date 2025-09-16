@@ -26,8 +26,6 @@ public interface TeacherService {
 
     public int getTeacherNum();
 
-    public List<Course> queryMySchedules(String tid);
-
     public List<Teacher> queryTeachersByCondition(Teacher teacher, int currentPage, int size);
 
     public int countTeachersByCondition(Teacher teacher);

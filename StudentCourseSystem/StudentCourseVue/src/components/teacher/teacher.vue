@@ -11,32 +11,26 @@
           active-text-color="#ffd04b"
           @select="select"
         >
-          <el-menu-item index="teacherCourse">
-            <i class="el-icon-menu"></i>
-            <span slot="title">教师课表</span>
-          </el-menu-item>
           <el-menu-item index="addCourse">
             <i class="el-icon-document"></i>
-            <span slot="title">添加课程</span>
+            <span slot="title">课程申请</span>
           </el-menu-item>
           <el-menu-item index="addClass">
             <i class="el-icon-date"></i>
             <span slot="title">添加上课时间</span>
           </el-menu-item>
-          <el-menu-item index="manageGrade">
-            <i class="el-icon-setting"></i>
-            <span slot="title">成绩管理</span>
-          </el-menu-item>
           <el-menu-item index="teacherInfo">
             <i class="el-icon-edit"></i>
-            <span slot="title">修改个人信息</span>
+            <span slot="title">重置密码</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main style="margin-left: 250px">
         <div class="tobar base_shadow">
           <div class="title">学生在线选课系统</div>
-          <el-button class="exit_btn" type="danger" @click="exit">退出</el-button>
+          <el-button class="exit_btn" type="danger" @click="exit"
+            >退出</el-button
+          >
         </div>
         <transition>
           <router-view class="router"></router-view>
@@ -53,30 +47,29 @@ export default {
     return {};
   },
   components: {
-    "user-info": userInfo
+    "user-info": userInfo,
   },
   methods: {
     exit() {
-      
       //清除Cookie
-      document.cookie = "=;"
+      document.cookie = "=;";
       //清除session
       sessionStorage.clear();
       window.location.href = this.COMMON.login_location;
     },
     select(index) {
       this.$router.push("/teacher/" + index);
+    },
+  },
+  mounted() {
+    if (this.$store.state.identity != "teacher") {
+      this.$router.push("/");
     }
   },
-  mounted(){
-    if(this.$store.state.identity != 'teacher'){
-      this.$router.push('/')
-    }
-  }
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .tobar {
   background-color: #fff;
   margin: -20px;

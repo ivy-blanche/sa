@@ -28,7 +28,6 @@ public class Course {
     private String Tid;
     private String Cname;
     private Float Ccredit;
-    private String Cintroduction;
     private String Ctype;
     private String Cbelongcoll;
     private String Cbelongpro;
