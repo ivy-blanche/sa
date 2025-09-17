@@ -164,7 +164,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         var schedule = {
           cname: data[i].cname,
-          tname: data[i].teacher.tname,
+          tname: data[i].teacher ? data[i].teacher.tname : "",
           schedule: {
             monday: data[i].monday == null ? "" : data[i].monday,
             tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
@@ -174,10 +174,16 @@ export default {
           },
           index: "",
           courseweek: data[i].courseweek,
-          cclassroom: isOne ? data[i].cclassroom : data[i].course.cclassroom,
+          cclassroom: isOne
+            ? data[i].cclassroom
+            : data[i].course
+            ? data[i].course.cclassroom
+            : "",
           cteachbuilding: isOne
             ? data[i].cteachbuilding
-            : data[i].course.cteachbuilding,
+            : data[i].course
+            ? data[i].course.cteachbuilding
+            : "",
         };
 
         for (var k in schedule.schedule) {
@@ -186,7 +192,7 @@ export default {
           for (var j of timeList) {
             var tmp = {
               cname: data[i].cname,
-              tname: data[i].teacher.tname,
+              tname: data[i].teacher ? data[i].teacher.tname : "",
               schedule: {
                 monday: data[i].monday == null ? "" : data[i].monday,
                 tuesday: data[i].tuesday == null ? "" : data[i].tuesday,
@@ -198,10 +204,14 @@ export default {
               courseweek: data[i].courseweek,
               cclassroom: isOne
                 ? data[i].cclassroom
-                : data[i].course.cclassroom,
+                : data[i].course
+                ? data[i].course.cclassroom
+                : "",
               cteachbuilding: isOne
                 ? data[i].cteachbuilding
-                : data[i].course.cteachbuilding,
+                : data[i].course
+                ? data[i].course.cteachbuilding
+                : "",
             };
             scheduleList.push(tmp);
           }

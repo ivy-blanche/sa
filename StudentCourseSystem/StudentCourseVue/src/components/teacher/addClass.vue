@@ -5,7 +5,6 @@
     element-loading-text="系统正在自动分配合适的上课教室"
   >
     <!-- <div> -->
-    <h1>添加上课时间</h1>
     <div class="container">
       <div class="main">
         <div class="left">
@@ -58,15 +57,14 @@
           </transition>
         </div>
         <div class="right">
-          <div class="title">
-            <span class="step">STEP. 2</span>请选择上课时间：
-          </div>
           <div class="header">
             <div class="day">周一</div>
             <div class="day">周二</div>
             <div class="day">周三</div>
             <div class="day">周四</div>
             <div class="day">周五</div>
+            <div class="day">周六</div>
+            <div class="day">周日</div>
           </div>
           <div class="choose_card">
             <div
@@ -87,10 +85,7 @@
               ></div>
             </div>
           </div>
-          <div class="tag">
-            <i class="el-icon-info"></i>
-            请选择上方对应的上课时间，蓝色区块为不可选择上课时间，提交课程后将不能更改。
-          </div>
+
           <div class="choose_list">
             <div class="title">已选时间：</div>
             <div class="no_chooseData" v-if="chooseData.length == 0">
@@ -137,6 +132,8 @@ export default {
             wednesday: data[i].wednesday == null ? "" : data[i].wednesday,
             thursday: data[i].thursday == null ? "" : data[i].thursday,
             friday: data[i].friday == null ? "" : data[i].friday,
+            saturday: data[i].saturday == null ? "" : data[i].saturday,
+            sunday: data[i].sunday == null ? "" : data[i].sunday,
           },
           index: "",
           courseweek: data[i].courseweek,
@@ -155,18 +152,21 @@ export default {
                 wednesday: data[i].wednesday == null ? "" : data[i].wednesday,
                 thursday: data[i].thursday == null ? "" : data[i].thursday,
                 friday: data[i].friday == null ? "" : data[i].friday,
+                saturday: data[i].saturday == null ? "" : data[i].saturday,
+                sunday: data[i].sunday == null ? "" : data[i].sunday,
               },
-              index: (this.getWeekDay(k) - 1) * 4 + parseInt(j),
+              index: (this.getWeekDay(k) - 1) * 5 + parseInt(j),
               courseweek: data[i].courseweek,
               cclassroom: data[i].cclassroom,
               cteachbuilding: data[i].cteachbuilding,
+              choose: true,
             };
             scheduleList.push(tmp);
           }
         }
       }
-      //创建20个课程 填满
-      for (let i = 0; i < 20; i++) {
+      //创建35个课程 填满 (7天 * 5节课)
+      for (let i = 0; i < 35; i++) {
         finalData.push({
           cname: "",
           schedule: {
@@ -175,6 +175,8 @@ export default {
             wednesday: "",
             thursday: "",
             friday: "",
+            saturday: "",
+            sunday: "",
           },
           index: "",
           courseweek: "",
@@ -193,10 +195,10 @@ export default {
       this.courseTable[index].choose = !this.courseTable[index].choose;
       if (this.courseTable[index].choose) {
         var tableIndex = index + 1;
-        //根据索引计算第几节
-        var time = tableIndex % 4 == 0 ? 4 : tableIndex % 4;
+        //根据索引计算第几节 - 现在每天5节课
+        var time = tableIndex % 5 == 0 ? 5 : tableIndex % 5;
         //根据索引计算第几天
-        var day = Math.floor((tableIndex - time) / 4) + 1;
+        var day = Math.floor((tableIndex - time) / 5) + 1;
         var obj = {
           time: time,
           day: day,
@@ -254,6 +256,14 @@ export default {
           this.chooseCourseData.friday == null
             ? []
             : this.chooseCourseData.friday.split(","),
+        Saturday:
+          this.chooseCourseData.saturday == null
+            ? []
+            : this.chooseCourseData.saturday.split(","),
+        Sunday:
+          this.chooseCourseData.sunday == null
+            ? []
+            : this.chooseCourseData.sunday.split(","),
       };
       var data = this.chooseData;
       for (var i of data) {
@@ -272,6 +282,12 @@ export default {
             break;
           case 5:
             obj.Friday.push(i.time + "");
+            break;
+          case 6:
+            obj.Saturday.push(i.time + "");
+            break;
+          case 7:
+            obj.Sunday.push(i.time + "");
             break;
         }
       }
@@ -321,10 +337,42 @@ export default {
         .then((res) => {
           if (res.data.code == 200) {
             this.chooseCourseData = res.data.data;
-            // this.courseTable = this.parseData([res.data.data]);
             //让选择的课程复原
             for (var i of this.courseTable) {
               i.choose = false;
+            }
+            // 从数据库加载已选时间并设置为已选状态
+            const days = [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ];
+            for (let day of days) {
+              if (
+                this.chooseCourseData[day] &&
+                this.chooseCourseData[day] !== ""
+              ) {
+                let times = this.chooseCourseData[day].split(",");
+                let dayNumber = this.getWeekDay(day.toLowerCase());
+                for (let timeStr of times) {
+                  let time = parseInt(timeStr);
+                  if (!isNaN(time)) {
+                    let index = (dayNumber - 1) * 5 + time - 1;
+                    if (index >= 0 && index < this.courseTable.length) {
+                      this.courseTable[index].choose = true;
+                      this.chooseData.push({
+                        time: time,
+                        day: dayNumber,
+                        index: index,
+                      });
+                    }
+                  }
+                }
+              }
             }
           }
         })
@@ -345,6 +393,10 @@ export default {
           return 4;
         case "friday":
           return 5;
+        case "saturday":
+          return 6;
+        case "sunday":
+          return 7;
         default:
           return 0;
       }
@@ -441,10 +493,10 @@ export default {
   }
 
   .right {
-    width: 430px;
+    width: 550px;
     margin-left: 20px;
     background-color: #fff;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
     color: #606266;
@@ -458,7 +510,7 @@ export default {
       display: flex;
 
       .day {
-        width: 20%;
+        width: 14.28%;
         font-size: 14px;
         text-align: center;
       }
@@ -468,11 +520,11 @@ export default {
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
-      height: 220px;
+      height: 350px;
 
       .class {
-        width: 20%;
-        height: 55px;
+        width: 14.28%;
+        height: 70px;
         padding: 10px;
         box-sizing: border-box;
 
